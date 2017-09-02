@@ -1,0 +1,53 @@
+<idea-plugin>
+    <id>Sexy Editor</id>
+    <name>Sexy Editor</name>
+    <version>2.0</version>
+    <vendor email="igor@jodd.org" url="http://oblac.com">Oblac.com</vendor>
+
+    <description><![CDATA[
+	Make your IDE editor <b>sexy</b> by putting an image in the editor background :)
+	Use different image(s) for different file sets, on various positions, in random mode,
+	or even in slide-show mode!
+	<br/><br/>
+	This plugin is totally useless, but, hey, you'll become a major geek in the office:)
+	Beware: usage of this plugin may produce some jealousy among your co-workers,
+	and may attract some hot-looking-females: use it on your own risk!
+	<br/><br/>
+	https://github.com/igorspasic/idea-sexyeditor
+    ]]></description>
+
+    <change-notes><![CDATA[
+	<ul>
+        <li>2.0 - Plugin rewritten</li>
+     </ul>
+    ]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="162"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable instance="net.intellij.plugins.sexyeditor.SexyEditorConfigurable"></applicationConfigurable>
+        <applicationService serviceInterface="net.intellij.plugins.sexyeditor.SexyEditorState" serviceImplementation="net.intellij.plugins.sexyeditor.SexyEditorState"></applicationService>
+    </extensions>
+
+    <actions>
+        <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="Myplugin.Textboxes" class="HelloAction" text="Hello" description="Says hello"/>
+        </group>
+    </actions>
+
+    <application-components>
+        <component>
+            <implementation-class>net.intellij.plugins.sexyeditor.SexyEditor</implementation-class>
+        </component>
+    </application-components>
+
+</idea-plugin>

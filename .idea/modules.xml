@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/live-sexyeditor.iml" filepath="$PROJECT_DIR$/.idea/modules/live-sexyeditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/live-sexyeditor_main.iml" filepath="$PROJECT_DIR$/.idea/modules/live-sexyeditor_main.iml" group="live-sexyeditor" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/live-sexyeditor_test.iml" filepath="$PROJECT_DIR$/.idea/modules/live-sexyeditor_test.iml" group="live-sexyeditor" />
+    </modules>
+  </component>
+</project>
