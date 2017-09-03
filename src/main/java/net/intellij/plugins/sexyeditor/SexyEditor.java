@@ -15,7 +15,7 @@ import java.util.Random;
  */
 public class SexyEditor implements ApplicationComponent {
 
-	public static final String COMPONENT_NAME = "SexyEditor";
+	public static final String COMPONENT_NAME = "LiveSexyEditor";
 	private static Random rnd = new Random();
 	private Icon[] pluginIcons;
 

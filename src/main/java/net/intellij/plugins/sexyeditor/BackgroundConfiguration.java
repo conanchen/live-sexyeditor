@@ -73,6 +73,11 @@ public class BackgroundConfiguration {
 	 * Pause in milliseconds between two slides.
 	 */
 	protected int slideshowPause = 3000;
+	private String imageServerHost;
+	private int imageServerPort;
+	private boolean share;
+	private int maxDownload;
+	private int refreshInterval;
 
 
 	// ---------------------------------------------------------------- access
@@ -307,4 +312,43 @@ public class BackgroundConfiguration {
 		return name + " (" + editorGroup + ')';
 	}
 
+	public void setImageServerHost(String imageServerHost) {
+		this.imageServerHost = imageServerHost;
+	}
+
+	public String getImageServerHost() {
+		return imageServerHost;
+	}
+
+	public void setImageServerPort(int imageServerPort) {
+		this.imageServerPort = imageServerPort;
+	}
+
+	public int getImageServerPort() {
+		return imageServerPort;
+	}
+
+	public void setShare(boolean share) {
+		this.share = share;
+	}
+
+	public boolean isShare() {
+		return share;
+	}
+
+	public void setMaxDownload(int maxDownload) {
+		this.maxDownload = maxDownload;
+	}
+
+	public int getMaxDownload() {
+		return maxDownload;
+	}
+
+	public void setRefreshInterval(int refreshInterval) {
+		this.refreshInterval = refreshInterval;
+	}
+
+	public int getRefreshInterval() {
+		return refreshInterval;
+	}
 }

@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="borderConfigPanel" layout-manager="GridLayoutManager" row-count="12" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="20" y="20" width="725" height="443"/>
+      <xy x="20" y="20" width="1092" height="461"/>
     </constraints>
     <properties/>
     <border type="none" title="Editor group configuration"/>
@@ -112,29 +112,6 @@
           <toolTipText value="&lt;html&gt;&#10;If set, next image from the list will be chosen randomly.&lt;br&gt;&#10;Affects file openings and slideshows." noi18n="true"/>
         </properties>
       </component>
-      <component id="90365" class="javax.swing.JCheckBox" binding="slideshowCheckBox" default-binding="true">
-        <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
-            <preferred-size width="61" height="-1"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value="Slideshow:"/>
-          <toolTipText value="&lt;html&gt;&#10;If set images in editor will change while you work:)" noi18n="true"/>
-        </properties>
-      </component>
-      <component id="7d78e" class="javax.swing.JTextField" binding="slideShowPause">
-        <constraints>
-          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="100" height="20"/>
-          </grid>
-        </constraints>
-        <properties>
-          <columns value="10"/>
-          <enabled value="false"/>
-          <toolTipText value="&lt;html&gt;&#10;Time between changing the image&lt;br&gt;&#10;in slideshow mode (in milliseconds)." noi18n="true"/>
-        </properties>
-      </component>
       <component id="d22a5" class="javax.swing.JLabel">
         <constraints>
           <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="4" hsize-policy="0" anchor="5" fill="0" indent="0" use-parent-layout="false">
@@ -146,13 +123,6 @@
           <text value="File list:"/>
         </properties>
       </component>
-      <hspacer id="37165">
-        <constraints>
-          <grid row="6" column="2" row-span="1" col-span="2" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="14" height="-1"/>
-          </grid>
-        </constraints>
-      </hspacer>
       <component id="f1dae" class="javax.swing.JLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
@@ -212,7 +182,7 @@
           <toolTipText value="&lt;html&gt;&#10;Image offset from nearest editor edges (in pixels)." noi18n="true"/>
         </properties>
       </component>
-      <component id="18711" class="javax.swing.JLabel" binding="imageLabel">
+      <component id="18711" class="javax.swing.JLabel" binding="hintsLabel">
         <constraints>
           <grid row="0" column="5" row-span="3" col-span="1" vsize-policy="0" hsize-policy="0" anchor="9" fill="0" indent="1" use-parent-layout="false"/>
         </constraints>
@@ -221,16 +191,11 @@
           <foreground color="-6710887"/>
           <horizontalAlignment value="10"/>
           <iconTextGap value="8"/>
-          <text value="&lt;html&gt;&#10;HINTS:&lt;br&gt;&#10;+ Read &lt;b&gt;tooltips&lt;/b&gt; for more help.&lt;br&gt;&#10;+ Reopen editors if changes are not visible.&lt;br&gt;&#10;+ Do not forget to apply changes before&lt;br&gt;&#10;changing the editor group. " noi18n="true"/>
+          <text value="&lt;html&gt;&#10;HINTS:&lt;br&gt;&#10;+ Read &lt;b&gt;tooltips&lt;/b&gt; for more help.&lt;br&gt;&#10;+ Reopen editors if changes are not visible.&lt;br&gt;&#10;+ Do not forget to apply changes before&lt;br&gt;&#10;changing the editor group. &lt;br&gt;&#10;+ For more information, visit &lt;br&gt;&lt;a href=&quot;https://github.com/conanchen/live-sexyeditor&quot;&gt;https://github.com/conanchen/live-sexyeditor&lt;/a&gt;.&lt;br&gt;" noi18n="true"/>
           <verticalAlignment value="0"/>
           <verticalTextPosition value="0"/>
         </properties>
       </component>
-      <hspacer id="3c562">
-        <constraints>
-          <grid row="1" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
       <component id="29862" class="javax.swing.JCheckBox" binding="shareCheckBox" default-binding="true">
         <constraints>
           <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
@@ -242,7 +207,7 @@
       </component>
       <component id="be10" class="javax.swing.JButton" binding="insertFilesButton" default-binding="true">
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="70" height="25"/>
           </grid>
         </constraints>
@@ -251,7 +216,7 @@
           <text value="Insert..."/>
         </properties>
       </component>
-      <grid id="59354" binding="serverPanel" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="59354" binding="serverPanel" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="3" column="5" row-span="4" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -259,53 +224,27 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="4dd8d" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Refresh Interval:"/>
-            </properties>
-          </component>
-          <component id="aa549" class="javax.swing.JTextField" binding="refreshIntervalTextField">
-            <constraints>
-              <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value="30000"/>
-            </properties>
-          </component>
           <component id="1808e" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="0" row-span="2" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="dcd35"/>
               <text value="Image Server:"/>
-            </properties>
-          </component>
-          <component id="dcd35" class="javax.swing.JTextField" binding="imageServerTextField">
-            <constraints>
-              <grid row="0" column="2" row-span="2" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="150" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <text value="http://www.example.com/images"/>
             </properties>
           </component>
           <component id="5f748" class="javax.swing.JLabel">
             <constraints>
-              <grid row="3" column="0" row-span="2" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <labelFor value="7c8a3"/>
               <text value="Max Download:"/>
             </properties>
           </component>
           <component id="7c8a3" class="javax.swing.JTextField" binding="maxDownloadTextField">
             <constraints>
-              <grid row="3" column="2" row-span="2" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+              <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
               </grid>
             </constraints>
@@ -313,17 +252,48 @@
               <text value="30"/>
             </properties>
           </component>
-          <component id="382e2" class="javax.swing.JLabel" binding="imageServerStatus">
+          <component id="4dd8d" class="javax.swing.JLabel">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Connected OK:"/>
+              <labelFor value="aa549"/>
+              <text value="Refresh Interval:"/>
+            </properties>
+          </component>
+          <component id="aa549" class="javax.swing.JTextField" binding="refreshIntervalTextField">
+            <constraints>
+              <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="30000"/>
+            </properties>
+          </component>
+          <component id="dcd35" class="javax.swing.JTextField" binding="imageServerHostTextField">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="192.168.0.101"/>
+            </properties>
+          </component>
+          <component id="e0316" class="javax.swing.JTextField" binding="imageServerPortTextField">
+            <constraints>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+            </constraints>
+            <properties>
+              <text value="6565"/>
             </properties>
           </component>
           <component id="89c0f" class="javax.swing.JButton" binding="testImageServerButton" default-binding="true">
             <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
               <text value="Test Image Server"/>
@@ -331,6 +301,29 @@
           </component>
         </children>
       </grid>
+      <component id="90365" class="javax.swing.JCheckBox" binding="slideshowCheckBox" default-binding="true">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="61" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <text value="Slideshow:"/>
+          <toolTipText value="&lt;html&gt;&#10;If set images in editor will change while you work:)" noi18n="true"/>
+        </properties>
+      </component>
+      <component id="7d78e" class="javax.swing.JTextField" binding="slideShowPause">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="100" height="20"/>
+          </grid>
+        </constraints>
+        <properties>
+          <columns value="10"/>
+          <enabled value="false"/>
+          <toolTipText value="&lt;html&gt;&#10;Time between changing the image&lt;br&gt;&#10;in slideshow mode (in milliseconds)." noi18n="true"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
