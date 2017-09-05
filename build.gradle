@@ -13,14 +13,14 @@ buildscript {
     dependencies {
         classpath "gradle.plugin.com.google.protobuf:protobuf-gradle-plugin:0.8.1"
         //plugin: 'org.jetbrains.intellij' conflict with plugin: "com.google.protobuf"
-        //classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
+        classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
     }
 }
 
 apply plugin: "idea"
 apply plugin: 'java'
 apply plugin: "com.google.protobuf"
-//apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'org.jetbrains.intellij'
 
 //
 repositories {
