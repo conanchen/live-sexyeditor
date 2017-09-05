@@ -6,11 +6,87 @@ buildscript {
         maven {
             url 'http://dl.bintray.com/jetbrains/intellij-plugin-service'
         }
-
+        jcenter()
+        mavenCentral()
+        mavenLocal()
     }
     dependencies {
-        classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
+        classpath "gradle.plugin.com.google.protobuf:protobuf-gradle-plugin:0.8.1"
+        //plugin: 'org.jetbrains.intellij' conflict with plugin: "com.google.protobuf"
+        //classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
     }
 }
 
-apply plugin: 'org.jetbrains.intellij'
+apply plugin: "idea"
+apply plugin: 'java'
+apply plugin: "com.google.protobuf"
+//apply plugin: 'org.jetbrains.intellij'
+
+//
+repositories {
+    maven {
+        url 'http://central.maven.org/maven2/'
+    }
+    maven {
+        url 'http://www.datanucleus.org/downloads/maven2/'
+    }
+
+}
+dependencies {
+    compile 'io.grpc:grpc-netty:1.6.1'
+    compile('io.grpc:grpc-protobuf:1.6.1')
+//
+//    {
+//        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+//        exclude group: 'com.google.protobuf', module: 'protobuf-java-util'
+//    }
+    compile 'io.grpc:grpc-stub:1.6.1'
+
+    // https://mvnrepository.com/artifact/com.intellij/forms_rt
+    compile group: 'com.intellij', name: 'forms_rt', version: 'IC-103.255'
+    // https://mvnrepository.com/artifact/com.intellij/openapi
+    compile group: 'com.intellij', name: 'openapi', version: 'IC-103.255'
+    // https://mvnrepository.com/artifact/org.jetbrains/annotations-java5
+    compile group: 'org.jetbrains', name: 'annotations-java5', version: '15.0'
+    // https://mvnrepository.com/artifact/com.intellij/util
+    compile group: 'com.intellij', name: 'util', version: 'IC-103.255'
+    // https://mvnrepository.com/artifact/com.intellij/extensions
+    compile group: 'com.intellij', name: 'extensions', version: 'IC-103.255'
+
+}
+
+
+protobuf {
+    // Configure the protoc executable
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.4.0'
+
+    }
+    plugins {
+        // Define a plugin with name 'grpc'
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.6.1'
+        }
+    }
+
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+
+    generatedFilesBaseDir = "$projectDir/build/generated/source/proto"
+}
+
+clean {
+    delete protobuf.generatedFilesBaseDir
+}
+
+idea {
+    module {
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java");
+        // If you have additional sourceSets and/or codegen plugins, add all of them
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc");
+    }
+}

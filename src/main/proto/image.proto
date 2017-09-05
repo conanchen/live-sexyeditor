@@ -12,36 +12,35 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-syntax = "proto3";
+syntax = "proto2";
 
 option java_package = "net.intellij.plugins.sexyeditor.image";
 
-
-
-// The emoji service definition.
-service Emoji {
+// The image service definition.
+service Image {
 
     // A server-to-client streaming RPC.
     //
-    // Obtains the Emojis whose status are after the given lastUpdated.  Results are
+    // Obtains the Images whose status are after the given lastUpdated.  Results are
     // streamed rather than returned at once (e.g. in a response message with a
     // repeated field), as the lastUpdated maybe an very old time and contain a
-    // huge number of emojis.
-    rpc ListEmojis (EmojiRequest) returns (stream EmojiResponse) {}
+    // huge number of images.
+    rpc ListImages (ImageRequest) returns (stream ImageResponse) {
+    }
 }
 
-message EmojiRequest{
-    int64 afterLastUpdated = 1;
-    int32 pageSize = 2;
+message ImageRequest {
+    required int64 afterLastUpdated = 1;
+    required int32 pageSize = 2;
 }
 
-message EmojiResponse {
-    string codepoint = 1;
-    string codepointu16 = 2;
-    string groupId = 3;
-    string subgroupId = 4;
-    string name = 5;
-    int32 sequence = 6;
-    int64 lastUpdated = 7;
-    bool active = 8;
+message ImageResponse {
+    required string codepoint = 1;
+    required string codepointu16 = 2;
+    required string groupId = 3;
+    optional string subgroupId = 4;
+    required string name = 5;
+    required int32 sequence = 6;
+    required int64 lastUpdated = 7;
+    required bool active = 8;
 }

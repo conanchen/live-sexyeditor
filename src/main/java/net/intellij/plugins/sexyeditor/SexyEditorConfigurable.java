@@ -19,6 +19,12 @@ public class SexyEditorConfigurable implements Configurable {
 
 	@Nullable
 	@Override
+	public Icon getIcon() {
+		return null;
+	}
+
+	@Nullable
+	@Override
 	public String getHelpTopic() {
 		return null;
 	}
