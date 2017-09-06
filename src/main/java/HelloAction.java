@@ -9,6 +9,8 @@ public class HelloAction extends AnAction {
 
   public void actionPerformed(AnActionEvent event) {
     Project project = event.getData(PlatformDataKeys.PROJECT);
-    Messages.showMessageDialog(project, "Hello world!", "Greeting", Messages.getInformationIcon());
+    HelloWorldClient client = new HelloWorldClient("localhost", 42420);
+
+    Messages.showMessageDialog(project, "Hello world! "+client.greet("Conan"), "Greeting", Messages.getInformationIcon());
   }
 }

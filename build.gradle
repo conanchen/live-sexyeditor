@@ -13,12 +13,13 @@ buildscript {
     dependencies {
         classpath "gradle.plugin.com.google.protobuf:protobuf-gradle-plugin:0.8.1"
         //plugin: 'org.jetbrains.intellij' conflict with plugin: "com.google.protobuf"
-        classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
+        //classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
+        classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.17"
     }
 }
 
+apply plugin: "java"
 apply plugin: "idea"
-apply plugin: 'java'
 apply plugin: "com.google.protobuf"
 apply plugin: 'org.jetbrains.intellij'
 
@@ -32,27 +33,22 @@ repositories {
     }
 
 }
+
+
 dependencies {
-    compile 'io.grpc:grpc-netty:1.6.1'
-    compile('io.grpc:grpc-protobuf:1.6.1')
-//
-//    {
-//        exclude group: 'com.google.protobuf', module: 'protobuf-java'
-//        exclude group: 'com.google.protobuf', module: 'protobuf-java-util'
-//    }
-    compile 'io.grpc:grpc-stub:1.6.1'
-
-    // https://mvnrepository.com/artifact/com.intellij/forms_rt
-    compile group: 'com.intellij', name: 'forms_rt', version: 'IC-103.255'
-    // https://mvnrepository.com/artifact/com.intellij/openapi
-    compile group: 'com.intellij', name: 'openapi', version: 'IC-103.255'
-    // https://mvnrepository.com/artifact/org.jetbrains/annotations-java5
-    compile group: 'org.jetbrains', name: 'annotations-java5', version: '15.0'
-    // https://mvnrepository.com/artifact/com.intellij/util
-    compile group: 'com.intellij', name: 'util', version: 'IC-103.255'
-    // https://mvnrepository.com/artifact/com.intellij/extensions
-    compile group: 'com.intellij', name: 'extensions', version: 'IC-103.255'
-
+    compile('io.grpc:grpc-netty:1.6.1')
+    compile('io.grpc:grpc-protobuf:1.6.1') {
+        force true
+    }
+    compile('io.grpc:grpc-stub:1.6.1') {
+        force true
+    }
+    compile('com.google.protobuf:protobuf-java:3.3.1') {
+        force true
+    }
+    compile('io.grpc:grpc-core:1.6.1') {
+        force true
+    }
 }
 
 
@@ -60,7 +56,7 @@ protobuf {
     // Configure the protoc executable
     protoc {
         // Download from repositories
-        artifact = 'com.google.protobuf:protoc:3.4.0'
+        artifact = 'com.google.protobuf:protoc:3.0.0'
 
     }
     plugins {
@@ -85,8 +81,22 @@ clean {
 
 idea {
     module {
-        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java");
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
         // If you have additional sourceSets and/or codegen plugins, add all of them
-        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc");
+        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc")
+
     }
 }
+
+
+project.afterEvaluate {
+    sourceSets {
+        main {
+            compileClasspath -= files(new File(intellij.ideaDependency.classes, "lib/protobuf-2.5.0.jar").getAbsolutePath(),
+                    new File(intellij.ideaDependency.classes, "lib/studio-profiler-grpc-1.0-jarjar.jar").getAbsolutePath())
+
+            project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
+        }
+    }
+}
+
