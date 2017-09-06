@@ -4,4 +4,4 @@ live sexyeditor plugin for Intellij IDEA
 
 forked https://github.com/igr/idea-sexyeditor
 
-grpc + protobuf 3 ? 
+grpc + protobuf 3  
