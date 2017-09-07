@@ -40,6 +40,9 @@ public class BorderConfig {
     private JTextField maxDownloadTextField;
     private JButton testImageServerButton;
     private JTextField imageServerPortTextField;
+    private JCheckBox downloadNormalCheckBox;
+    private JCheckBox downloadSexyCheckBox;
+    private JCheckBox downloadPornCheckBox;
 
 
     private DefaultComboBoxModel positionComboBoxModel;
@@ -155,6 +158,16 @@ public class BorderConfig {
         imageServerHostTextField.setText(config.getImageServerHost());
         imageServerPortTextField.setText(String.valueOf(config.getImageServerPort()));
         maxDownloadTextField.setText(String.valueOf(config.getMaxDownload()));
+        if (downloadNormalCheckBox.isSelected() != config.isDownloadNormalImage()) {
+            downloadNormalCheckBox.doClick();
+        }
+        if (downloadSexyCheckBox.isSelected() != config.isDownloadSexyImage()) {
+            downloadSexyCheckBox.doClick();
+        }
+        if (downloadPornCheckBox.isSelected() != config.isDownloadPornImage()) {
+            downloadPornCheckBox.doClick();
+        }
+
         refreshIntervalTextField.setText(String.valueOf(config.getRefreshInterval()));
         if (shareCheckBox.isSelected() != config.isShare()) {
             shareCheckBox.doClick();
@@ -187,6 +200,9 @@ public class BorderConfig {
         config.setShare(shareCheckBox.isSelected());
         config.setMaxDownload(Integer.parseInt(maxDownloadTextField.getText()));
         config.setRefreshInterval(Integer.parseInt(refreshIntervalTextField.getText()));
+        config.setDownloadNormalImage(downloadNormalCheckBox.isSelected());
+        config.setDownloadSexyImage(downloadSexyCheckBox.isSelected());
+        config.setDownloadPornImage(downloadPornCheckBox.isSelected());
 
         return config;
     }
@@ -222,6 +238,9 @@ public class BorderConfig {
                 || !maxDownloadTextField.getText().equals(String.valueOf(config.getMaxDownload()))
                 || !refreshIntervalTextField.getText().equals(String.valueOf(config.getRefreshInterval()))
                 || shareCheckBox.isSelected() != config.isShare()
+                || downloadNormalCheckBox.isSelected() != config.isDownloadNormalImage()
+                || downloadSexyCheckBox.isSelected() != config.isDownloadSexyImage()
+                || downloadPornCheckBox.isSelected() != config.isDownloadPornImage()
                 ;
     }
 
@@ -358,32 +377,44 @@ public class BorderConfig {
         insertFilesButton.setText("Insert...");
         borderConfigPanel.add(insertFilesButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, 25), null, 0, false));
         serverPanel = new JPanel();
-        serverPanel.setLayout(new GridLayoutManager(4, 4, new Insets(0, 0, 0, 0), -1, -1));
+        serverPanel.setLayout(new GridLayoutManager(5, 5, new Insets(0, 0, 0, 0), -1, -1));
         borderConfigPanel.add(serverPanel, new GridConstraints(3, 5, 4, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText("Image Server:");
         serverPanel.add(label7, new GridConstraints(0, 0, 2, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText("Max Download:");
-        serverPanel.add(label8, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        serverPanel.add(label8, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         maxDownloadTextField = new JTextField();
         maxDownloadTextField.setText("30");
-        serverPanel.add(maxDownloadTextField, new GridConstraints(2, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        serverPanel.add(maxDownloadTextField, new GridConstraints(3, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label9 = new JLabel();
         label9.setText("Refresh Interval:");
-        serverPanel.add(label9, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        serverPanel.add(label9, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         refreshIntervalTextField = new JTextField();
         refreshIntervalTextField.setText("30000");
-        serverPanel.add(refreshIntervalTextField, new GridConstraints(3, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        serverPanel.add(refreshIntervalTextField, new GridConstraints(4, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         imageServerHostTextField = new JTextField();
         imageServerHostTextField.setText("192.168.0.101");
-        serverPanel.add(imageServerHostTextField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        serverPanel.add(imageServerHostTextField, new GridConstraints(0, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         imageServerPortTextField = new JTextField();
         imageServerPortTextField.setText("6565");
-        serverPanel.add(imageServerPortTextField, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        serverPanel.add(imageServerPortTextField, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         testImageServerButton = new JButton();
         testImageServerButton.setText("Test Image Server");
-        serverPanel.add(testImageServerButton, new GridConstraints(1, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        serverPanel.add(testImageServerButton, new GridConstraints(1, 2, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label10 = new JLabel();
+        label10.setText("Download Category:");
+        serverPanel.add(label10, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        downloadNormalCheckBox = new JCheckBox();
+        downloadNormalCheckBox.setText("Normal");
+        serverPanel.add(downloadNormalCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        downloadPornCheckBox = new JCheckBox();
+        downloadPornCheckBox.setText("Porn");
+        serverPanel.add(downloadPornCheckBox, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        downloadSexyCheckBox = new JCheckBox();
+        downloadSexyCheckBox.setText("Sexy");
+        serverPanel.add(downloadSexyCheckBox, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         slideshowCheckBox = new JCheckBox();
         slideshowCheckBox.setText("Slideshow:");
         slideshowCheckBox.setToolTipText("<html>\nIf set images in editor will change while you work:)");

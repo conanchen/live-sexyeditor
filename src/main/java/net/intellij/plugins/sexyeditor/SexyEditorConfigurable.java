@@ -17,11 +17,6 @@ public class SexyEditorConfigurable implements Configurable {
 		return SexyEditor.COMPONENT_NAME;
 	}
 
-	@Nullable
-	@Override
-	public Icon getIcon() {
-		return null;
-	}
 
 	@Nullable
 	@Override

@@ -78,6 +78,9 @@ public class BackgroundConfiguration {
 	private boolean share;
 	private int maxDownload;
 	private int refreshInterval;
+	private boolean downloadNormalImage;
+	private boolean downloadSexyImage;
+	private boolean downloadPornImage;
 
 
 	// ---------------------------------------------------------------- access
@@ -350,5 +353,29 @@ public class BackgroundConfiguration {
 
 	public int getRefreshInterval() {
 		return refreshInterval;
+	}
+
+	public boolean isDownloadNormalImage() {
+		return downloadNormalImage;
+	}
+
+	public void setDownloadNormalImage(boolean downloadNormalImage) {
+		this.downloadNormalImage = downloadNormalImage;
+	}
+
+	public boolean isDownloadSexyImage() {
+		return downloadSexyImage;
+	}
+
+	public void setDownloadSexyImage(boolean downloadSexyImage) {
+		this.downloadSexyImage = downloadSexyImage;
+	}
+
+	public boolean isDownloadPornImage() {
+		return downloadPornImage;
+	}
+
+	public void setDownloadPornImage(boolean downloadPornImage) {
+		this.downloadPornImage = downloadPornImage;
 	}
 }
