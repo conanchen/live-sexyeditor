@@ -21,6 +21,7 @@ buildscript {
 apply plugin: "idea"
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: "com.google.protobuf"
+apply plugin: 'nu.studer.jooq'
 
 //
 repositories {
@@ -63,9 +64,9 @@ dependencies {
     compile('org.jooq:jooq:3.9.5') {
         force true
     }
-//    jooqRuntime('com.h2database:h2:1.4.193') {
-//        force true
-//    }
+    jooqRuntime('com.h2database:h2:1.4.193') {
+        force true
+    }
 }
 
 
@@ -112,32 +113,32 @@ intellij {
     pluginName 'live-sexyeditor'
 }
 
-//jooq {
-//    version = '3.9.5' // the default (can be omitted)
-//    edition = 'OSS'   // the default (can be omitted), other allowed values are PRO, PRO_JAVA_6, and TRIAL
-//    sample(sourceSets.main) {
-//        jdbc {
-//            driver = 'org.h2.Driver'
-//            url = 'jdbc:h2:file:~/test;AUTO_SERVER=TRUE'
-//            user = 'sa'
-//            password = ''
-//        }
-//        generator {
-//            name = 'org.jooq.util.DefaultGenerator'
-//            database {
-//                name = 'org.jooq.util.h2.H2Database'
-//                includes = '.*'
-//                excludes = ''
-//            }
-//            target {
-//                packageName = 'nu.studer.sample'
-//            }
-//        }
-//    }
-//}
+jooq {
+    version = '3.9.5' // the default (can be omitted)
+    edition = 'OSS'   // the default (can be omitted), other allowed values are PRO, PRO_JAVA_6, and TRIAL
+    sexy(sourceSets.main) {
+        jdbc {
+            driver = 'org.h2.Driver'
+            url = 'jdbc:h2:file:~/test;AUTO_SERVER=TRUE'
+            user = 'sa'
+            password = ''
+        }
+        generator {
+            name = 'org.jooq.util.DefaultGenerator'
+            database {
+                name = 'org.jooq.util.h2.H2Database'
+                includes = '.*'
+                excludes = ''
+            }
+            target {
+                packageName = 'net.intellij.plugins.sexyeditor.database'
+            }
+        }
+    }
+}
 
-// removes the task dependency from compileJava to generateSampleJooqSchemaSource
-project.tasks.getByName('compileJava').dependsOn -= 'generateSampleJooqSchemaSource'
+// removes the task dependency from compileJava to generateSexyJooqSchemaSource
+project.tasks.getByName('compileJava').dependsOn -= 'generateSexyJooqSchemaSource'
 
 
 project.afterEvaluate {
@@ -147,6 +148,13 @@ project.afterEvaluate {
                     new File(intellij.ideaDependency.classes, "lib/studio-profiler-grpc-1.0-jarjar.jar").getAbsolutePath())
 
 //            project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
+
+
+            project.logger.lifecycle("******************************************************************")
+            project.logger.lifecycle("********Using JOOQ to code generation ****************************")
+            project.logger.lifecycle("********1. Run H2FileDatabaseExample to populate databae *********")
+            project.logger.lifecycle("********2. Run gradle task: generateSampleJooqSchemaSource *******")
+            project.logger.lifecycle("******************************************************************")
         }
     }
 }

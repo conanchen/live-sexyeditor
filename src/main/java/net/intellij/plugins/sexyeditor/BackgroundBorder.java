@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import static net.intellij.plugins.sexyeditor.BackgroundConfiguration.*;
 
@@ -185,7 +186,9 @@ public class BackgroundBorder implements Border {
 			return null;
 		}
 		try {
-			return ImageIO.read(new File(imageFileName));
+//			return ImageIO.read(new File(imageFileName));
+			return ImageIO.read(new URL("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg"));
+
 		} catch (IOException ioex) {
 			return null;
 		}

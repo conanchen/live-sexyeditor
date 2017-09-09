@@ -6,10 +6,9 @@ import io.grpc.stub.StreamObserver;
 import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
 import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
 
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.text.DateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.logging.Logger;
 
 public class HelloWorldServer {
@@ -62,10 +61,11 @@ public class HelloWorldServer {
         @Override
         public void sayHello(GreeterOuterClass.HelloRequest request, StreamObserver<GreeterOuterClass.HelloReply> responseObserver) {
 
-            LocalDate date = LocalDate.now();
-            String text = date.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-            GreeterOuterClass.HelloReply response = GreeterOuterClass.HelloReply.newBuilder().setMessage("Hello " + request.getName() + "at " + text).build();
+            String text = DateFormat.getInstance().format(  new Date());
+
+            GreeterOuterClass.HelloReply response = GreeterOuterClass.HelloReply.newBuilder()
+                    .setMessage("Hello " + request.getName() + " at " + text).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         }

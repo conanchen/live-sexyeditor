@@ -353,7 +353,7 @@ public class BackgroundConfiguration {
 		slideshowThread.start();
 	}
 
-	//TODO: using grpc to download images
+	//TODO: using grpc to download images metadata
 	private void createRefreshDownloadImageThread() {
 
 		if (refreshDownloadImageThread != null) {
