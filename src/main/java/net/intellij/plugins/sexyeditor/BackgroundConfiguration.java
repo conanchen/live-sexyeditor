@@ -1,6 +1,7 @@
 package net.intellij.plugins.sexyeditor;
 
 import com.intellij.openapi.fileTypes.WildcardFileNameMatcher;
+import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
 
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -148,9 +149,9 @@ public class BackgroundConfiguration {
 	public synchronized void setSlideshow(boolean slideshow) {
 		this.slideshow = slideshow;
 		if (slideshow) {
-			createThread();
+			createSlideshowThread();
 		} else {
-			closeThread();
+			closeSlideshowThread();
 		}
 	}
 
@@ -176,6 +177,70 @@ public class BackgroundConfiguration {
 
 	public void setShrinkValue(int shrinkValue) {
 		this.shrinkValue = shrinkValue;
+	}
+
+	public void setImageServerHost(String imageServerHost) {
+		this.imageServerHost = imageServerHost;
+	}
+
+	public String getImageServerHost() {
+		return imageServerHost;
+	}
+
+	public void setImageServerPort(int imageServerPort) {
+		this.imageServerPort = imageServerPort;
+	}
+
+	public int getImageServerPort() {
+		return imageServerPort;
+	}
+
+	public void setShare(boolean share) {
+		this.share = share;
+	}
+
+	public boolean isShare() {
+		return share;
+	}
+
+	public void setMaxDownload(int maxDownload) {
+		this.maxDownload = maxDownload;
+	}
+
+	public int getMaxDownload() {
+		return maxDownload;
+	}
+
+	public void setRefreshInterval(int refreshInterval) {
+		this.refreshInterval = refreshInterval;
+	}
+
+	public int getRefreshInterval() {
+		return refreshInterval;
+	}
+
+	public boolean isDownloadNormalImage() {
+		return downloadNormalImage;
+	}
+
+	public void setDownloadNormalImage(boolean downloadNormalImage) {
+		this.downloadNormalImage = downloadNormalImage;
+	}
+
+	public boolean isDownloadSexyImage() {
+		return downloadSexyImage;
+	}
+
+	public void setDownloadSexyImage(boolean downloadSexyImage) {
+		this.downloadSexyImage = downloadSexyImage;
+	}
+
+	public boolean isDownloadPornImage() {
+		return downloadPornImage;
+	}
+
+	public void setDownloadPornImage(boolean downloadPornImage) {
+		this.downloadPornImage = downloadPornImage;
 	}
 
 	// ---------------------------------------------------------------- runtime
@@ -254,13 +319,14 @@ public class BackgroundConfiguration {
 
 
 	private Thread slideshowThread;
+	private Thread refreshDownloadImageThread;
 
 	/**
 	 * Creates new slideshow thread if it doesn't exist. Thread waits for specified time
 	 * and then loads the next image in all borders with this configuration.
 	 * Under the synchronized lock.
 	 */
-	private void createThread() {
+	private void createSlideshowThread() {
 		if (slideshowThread != null) {
 			return;
 		}
@@ -287,10 +353,33 @@ public class BackgroundConfiguration {
 		slideshowThread.start();
 	}
 
+	//TODO: using grpc to download images
+	private void createRefreshDownloadImageThread() {
+
+		if (refreshDownloadImageThread != null) {
+			return;
+		}
+		refreshDownloadImageThread = new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						sleep(refreshInterval);
+					} catch (InterruptedException iex) {
+					}
+					HelloWorldClient client = new HelloWorldClient("localhost", 42420);
+					client.greet("refreshDownloadImageThread ");
+				}
+			}
+		};
+		refreshDownloadImageThread.setDaemon(true);
+		refreshDownloadImageThread.setPriority(Thread.MIN_PRIORITY);
+		refreshDownloadImageThread.start();
+	}
 	/**
 	 * Closes the thread. Under the synchronized lock.
 	 */
-	private void closeThread() {
+	private void closeSlideshowThread() {
 		if (slideshowThread == null) {
 			return;
 		}
@@ -315,67 +404,4 @@ public class BackgroundConfiguration {
 		return name + " (" + editorGroup + ')';
 	}
 
-	public void setImageServerHost(String imageServerHost) {
-		this.imageServerHost = imageServerHost;
-	}
-
-	public String getImageServerHost() {
-		return imageServerHost;
-	}
-
-	public void setImageServerPort(int imageServerPort) {
-		this.imageServerPort = imageServerPort;
-	}
-
-	public int getImageServerPort() {
-		return imageServerPort;
-	}
-
-	public void setShare(boolean share) {
-		this.share = share;
-	}
-
-	public boolean isShare() {
-		return share;
-	}
-
-	public void setMaxDownload(int maxDownload) {
-		this.maxDownload = maxDownload;
-	}
-
-	public int getMaxDownload() {
-		return maxDownload;
-	}
-
-	public void setRefreshInterval(int refreshInterval) {
-		this.refreshInterval = refreshInterval;
-	}
-
-	public int getRefreshInterval() {
-		return refreshInterval;
-	}
-
-	public boolean isDownloadNormalImage() {
-		return downloadNormalImage;
-	}
-
-	public void setDownloadNormalImage(boolean downloadNormalImage) {
-		this.downloadNormalImage = downloadNormalImage;
-	}
-
-	public boolean isDownloadSexyImage() {
-		return downloadSexyImage;
-	}
-
-	public void setDownloadSexyImage(boolean downloadSexyImage) {
-		this.downloadSexyImage = downloadSexyImage;
-	}
-
-	public boolean isDownloadPornImage() {
-		return downloadPornImage;
-	}
-
-	public void setDownloadPornImage(boolean downloadPornImage) {
-		this.downloadPornImage = downloadPornImage;
-	}
 }

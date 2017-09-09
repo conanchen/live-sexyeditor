@@ -115,10 +115,12 @@ public class BorderConfig {
         });
 
         testImageServerButton.addActionListener(e -> {
+            String hostport = imageServerHostTextField.getText() + ":" + imageServerPortTextField.getText();
+
             if (true) {
-                JOptionPane.showMessageDialog(new JFrame(), "Image server connected sucessfully.\n Eggs are not supposed to be green.");
+                JOptionPane.showMessageDialog(new JFrame(), "Image server (" + hostport + ") connected sucessfully.\n Eggs are not supposed to be green.");
             } else {
-                JOptionPane.showMessageDialog(new JFrame(), "Image server connected failed.\n Eggs are not supposed to be red.");
+                JOptionPane.showMessageDialog(new JFrame(), "Image server (" + hostport + ") connected failed.\n Eggs are not supposed to be red.");
             }
         });
     }

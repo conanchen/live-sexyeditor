@@ -12,16 +12,15 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.com.google.protobuf:protobuf-gradle-plugin:0.8.1"
-        //plugin: 'org.jetbrains.intellij' conflict with plugin: "com.google.protobuf"
-        //classpath "gradle.plugin.org.jetbrains:gradle-intellij-plugin:0.1.10"
+        classpath 'nu.studer:gradle-jooq-plugin:2.0.7'
         classpath "gradle.plugin.org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.17"
     }
 }
 
-apply plugin: "java"
+//apply plugin: "java"
 apply plugin: "idea"
-apply plugin: "com.google.protobuf"
 apply plugin: 'org.jetbrains.intellij'
+apply plugin: "com.google.protobuf"
 
 //
 repositories {
@@ -31,12 +30,17 @@ repositories {
     maven {
         url 'http://www.datanucleus.org/downloads/maven2/'
     }
+    maven {
+        url 'https://www.jetbrains.com/intellij-repository/releases'
+    }
 
 }
 
 
 dependencies {
-    compile('io.grpc:grpc-netty:1.6.1')
+    compile('io.grpc:grpc-netty:1.6.1'){
+        force true
+    }
     compile('io.grpc:grpc-protobuf:1.6.1') {
         force true
     }
@@ -49,6 +53,19 @@ dependencies {
     compile('io.grpc:grpc-core:1.6.1') {
         force true
     }
+    compile('com.h2database:h2:1.4.193') {
+        force true
+    }
+
+    //The plugin ensures that all your dependencies use the version and edition specified
+    // in the jooq configuration. So when you declare a compile dependency on jOOQ,
+    // you can omit the version:
+    compile('org.jooq:jooq:3.9.5') {
+        force true
+    }
+//    jooqRuntime('com.h2database:h2:1.4.193') {
+//        force true
+//    }
 }
 
 
@@ -88,6 +105,40 @@ idea {
     }
 }
 
+intellij {
+    version 'IC-2016.3' //IntelliJ IDEA 2016.3 dependency; for a full list of IntelliJ IDEA releases
+    // please see https://www.jetbrains.com/intellij-repository/releases
+    plugins 'coverage' //Bundled plugin dependencies
+    pluginName 'live-sexyeditor'
+}
+
+//jooq {
+//    version = '3.9.5' // the default (can be omitted)
+//    edition = 'OSS'   // the default (can be omitted), other allowed values are PRO, PRO_JAVA_6, and TRIAL
+//    sample(sourceSets.main) {
+//        jdbc {
+//            driver = 'org.h2.Driver'
+//            url = 'jdbc:h2:file:~/test;AUTO_SERVER=TRUE'
+//            user = 'sa'
+//            password = ''
+//        }
+//        generator {
+//            name = 'org.jooq.util.DefaultGenerator'
+//            database {
+//                name = 'org.jooq.util.h2.H2Database'
+//                includes = '.*'
+//                excludes = ''
+//            }
+//            target {
+//                packageName = 'nu.studer.sample'
+//            }
+//        }
+//    }
+//}
+
+// removes the task dependency from compileJava to generateSampleJooqSchemaSource
+project.tasks.getByName('compileJava').dependsOn -= 'generateSampleJooqSchemaSource'
+
 
 project.afterEvaluate {
     sourceSets {
@@ -95,8 +146,7 @@ project.afterEvaluate {
             compileClasspath -= files(new File(intellij.ideaDependency.classes, "lib/protobuf-2.5.0.jar").getAbsolutePath(),
                     new File(intellij.ideaDependency.classes, "lib/studio-profiler-grpc-1.0-jarjar.jar").getAbsolutePath())
 
-            project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
+//            project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
         }
     }
 }
-

@@ -1,6 +1,9 @@
+package net.intellij.plugins.sexyeditor.action;
+
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
 
 public class HelloAction extends AnAction {
   public HelloAction() {

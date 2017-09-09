@@ -1,7 +1,8 @@
-import io.grpc.ManagedChannel; 
+package net.intellij.plugins.sexyeditor.grpc;
+import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import net.intellij.plugins.sexyeditor.image.GreeterGrpc;
-import net.intellij.plugins.sexyeditor.image.GreeterOuterClass;
+import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
+import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
