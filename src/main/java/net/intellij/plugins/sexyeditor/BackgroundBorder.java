@@ -1,5 +1,7 @@
 package net.intellij.plugins.sexyeditor;
 
+import org.apache.commons.validator.routines.UrlValidator;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -26,6 +28,8 @@ public class BackgroundBorder implements Border {
 	private int imageHeight;
 
 	private boolean active;
+
+	private UrlValidator urlValidator = new UrlValidator();
 
 	public BackgroundBorder(BackgroundConfiguration configuration, Component component) {
 		this.active = true;
@@ -186,9 +190,12 @@ public class BackgroundBorder implements Border {
 			return null;
 		}
 		try {
-//			return ImageIO.read(new File(imageFileName));
-			return ImageIO.read(new URL("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg"));
-
+            if (urlValidator.isValid(imageFileName)) {
+                //return ImageIO.read(new URL("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg"));
+                return ImageIO.read(new URL(imageFileName));
+            } else {
+                return ImageIO.read(new File(imageFileName));
+            }
 		} catch (IOException ioex) {
 			return null;
 		}

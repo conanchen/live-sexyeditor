@@ -67,6 +67,9 @@ dependencies {
     jooqRuntime('com.h2database:h2:1.4.193') {
         force true
     }
+    // https://mvnrepository.com/artifact/commons-validator/commons-validator
+    compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
+
 }
 
 

@@ -38,9 +38,12 @@
     </extensions>
 
     <actions>
-        <group id="MyPlugin.SampleMenu" text="Greeting" description="Greeting menu">
-            <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="Myplugin.Textboxes" class="net.intellij.plugins.sexyeditor.action.HelloAction" text="Hello" description="Says hello"/>
+        <group id="LiveSexyEditor.SexyMenu" text="Sexy" description="Live Sexy Editor menu">
+            <add-to-group group-id="HelpMenu" anchor="last"/>
+            <add-to-group group-id="ToolbarFindGroup" anchor="first" />
+            <action id="LiveSexyEditor.SexyAction"
+                    class="net.intellij.plugins.sexyeditor.action.SexyAction" text="Sexy"
+                    description="Visit Sexy Image Webpage" icon="/net/intellij/plugins/sexyeditor/gfx/girl1.png"/>
         </group>
     </actions>
 

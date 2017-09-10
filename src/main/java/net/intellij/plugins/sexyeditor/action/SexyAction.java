@@ -5,8 +5,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
 
-public class HelloAction extends AnAction {
-  public HelloAction() {
+public class SexyAction extends AnAction {
+  public SexyAction() {
     super("Hello");
   }
 
@@ -14,6 +14,6 @@ public class HelloAction extends AnAction {
     Project project = event.getData(PlatformDataKeys.PROJECT);
     HelloWorldClient client = new HelloWorldClient("localhost", 42420);
 
-    Messages.showMessageDialog(project, "Hello world! "+client.greet("Conan"), "Greeting", Messages.getInformationIcon());
+    Messages.showMessageDialog(project, "Sexy world! "+client.greet("Conan"), "Greeting", Messages.getInformationIcon());
   }
 }
