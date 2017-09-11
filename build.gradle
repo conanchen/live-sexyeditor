@@ -154,9 +154,9 @@ project.afterEvaluate {
 
 
             project.logger.lifecycle("******************************************************************")
-            project.logger.lifecycle("********Using JOOQ to code generation ****************************")
-            project.logger.lifecycle("********1. Run H2FileDatabaseExample to populate databae *********")
-            project.logger.lifecycle("********2. Run gradle task: generateSampleJooqSchemaSource *******")
+            project.logger.lifecycle("****************Using JOOQ to code generation ********************")
+            project.logger.lifecycle("********1. Run SexyDatabaseSchema to generate databae schema *****")
+            project.logger.lifecycle("********2. Run gradle task: generateSexyJooqSchemaSource *********")
             project.logger.lifecycle("******************************************************************")
         }
     }

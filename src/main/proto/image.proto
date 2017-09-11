@@ -12,7 +12,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-syntax = "proto2";
+syntax = "proto3";
 
 option java_package = "net.intellij.plugins.sexyeditor.image";
 
@@ -30,17 +30,18 @@ service Image {
 }
 
 message ImageRequest {
-    required int64 afterLastUpdated = 1;
-    required int32 pageSize = 2;
+    int64 afterLastUpdated = 1;
+    int32 pageSize = 2;
+
 }
 
 message ImageResponse {
-    required string codepoint = 1;
-    required string codepointu16 = 2;
-    required string groupId = 3;
-    optional string subgroupId = 4;
-    required string name = 5;
-    required int32 sequence = 6;
-    required int64 lastUpdated = 7;
-    required bool active = 8;
+    string uuid = 1;
+    string url = 2;
+    string title = 3;
+    string desc = 4;
+    string type = 5;//NORMAL,SEXY,PORN
+
+    int64 lastUpdated = 6;
+    bool active = 7;
 }

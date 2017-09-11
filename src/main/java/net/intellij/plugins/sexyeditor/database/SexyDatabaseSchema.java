@@ -17,23 +17,23 @@ import org.jooq.impl.DSL;
 
 // H2 Database Example
 
-public class H2FileDatabaseExample {
+public class SexyDatabaseSchema {
 
-    private static final String DB_DRIVER = "org.h2.Driver";
-    private static final String DB_NAME = "test";
-    private static final String DB_URL = "jdbc:h2:file:~/" + DB_NAME;
-    private static final String DB_USER = "sa";
-    private static final String DB_PASSWORD = "";
+//    private static final String DB_DRIVER = "org.h2.Driver";
+//    private static final String DB_NAME = "test";
+//    private static final String DB_URL = "jdbc:h2:file:~/" + DB_NAME;
+//    private static final String DB_USER = "sa";
+//    private static final String DB_PASSWORD = "";
 
     private static final String SelectPersonsQuery = "select * from PERSON";
-    private static final String SelectImagesQuery = "select * from IMAGE";
+//    private static final String SelectImagesQuery = "select * from IMAGE";
 
     public static void main(String[] args) throws Exception {
         try {
             // delete the H2 database named 'test' in the user home directory
-            DeleteDbFiles.execute("~", DB_NAME, true);
+            DeleteDbFiles.execute("~", SexyDatabase.DB_NAME, true);
             insertPersonWithStatement();
-            DeleteDbFiles.execute("~", DB_NAME, true);
+            DeleteDbFiles.execute("~", SexyDatabase.DB_NAME, true);
             insertPersonWithPreparedStatement();
 
             System.out.println("\n------------------------------");
@@ -44,13 +44,12 @@ public class H2FileDatabaseExample {
             System.out.println("\n------------------------------");
 
             insertImageWithPreparedStatement();
-            queryImages(connection, SelectImagesQuery);
+            queryImages(connection, SexyDatabase.SelectImagesQuery);
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        insertAndQueryPersonWithJooq();
     }
 
 
@@ -130,13 +129,13 @@ public class H2FileDatabaseExample {
     private static Connection getDBConnection() {
         Connection dbConnection = null;
         try {
-            Class.forName(DB_DRIVER);
+            Class.forName(SexyDatabase.DB_DRIVER);
         } catch (ClassNotFoundException e) {
             System.out.println(e.getMessage());
         }
         try {
-            dbConnection = DriverManager.getConnection(DB_URL, DB_USER,
-                    DB_PASSWORD);
+            dbConnection = DriverManager.getConnection(SexyDatabase.DB_URL, SexyDatabase.DB_USER,
+                    SexyDatabase.DB_PASSWORD);
             return dbConnection;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -144,43 +143,6 @@ public class H2FileDatabaseExample {
         return dbConnection;
     }
 
-
-    public static void insertAndQueryPersonWithJooq() {
-
-
-        // Connection is the only JDBC resource that we need
-        // PreparedStatement and ResultSet are handled by jOOQ, internally
-        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            DSL.createTableIfNotExists(Person.PERSON);
-            long now = System.currentTimeMillis();
-            for (int i = 0; i < 10; i++) {
-                try {
-                    DSL.using(conn, SQLDialect.H2)
-                            .insertInto(Person.PERSON, Person.PERSON.ID, Person.PERSON.NAME)
-                            .values(i, i + "test@" + now)
-                            .execute();
-                } catch (DataAccessException e) {
-                    DSL.using(conn, SQLDialect.H2)
-                            .update(Person.PERSON)
-                            .set(Person.PERSON.NAME, i + "test@" + now)
-                            .where(Person.PERSON.ID.eq(Integer.valueOf(i)))
-                            .execute();
-                }
-            }
-            DSL.using(conn, SQLDialect.H2)
-                    .select()
-                    .from(Person.PERSON)
-                    .fetch()
-                    .map(r -> String.format("jooq----person id=%d name=%s ",
-                            r.getValue(Person.PERSON.ID), r.getValue(Person.PERSON.NAME)))
-                    .forEach(System.out::println);
-        }
-
-        // For the sake of this tutorial, let's keep exception handling simple
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
 
     private static void insertImageWithPreparedStatement() throws SQLException {

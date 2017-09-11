@@ -12,32 +12,36 @@ import java.util.UUID;
 
 // H2 Database Example
 
-public class ImageMetaDatabase {
+public class SexyDatabase {
 
-    private static final String DB_DRIVER = "org.h2.Driver";
-    private static final String DB_NAME = "test";
-    private static final String DB_URL = "jdbc:h2:file:~/" + DB_NAME;
-    private static final String DB_USER = "sa";
-    private static final String DB_PASSWORD = "";
+    public static final String DB_DRIVER = "org.h2.Driver";
+    public static final String DB_NAME = "test";
+    public static final String DB_URL = "jdbc:h2:file:~/" + DB_NAME;
+    public static final String DB_USER = "sa";
+    public static final String DB_PASSWORD = "";
 
-    private static final String SelectImagesQuery = "select * from IMAGE";
+    public static final String SelectImagesQuery = "select * from IMAGE";
 
 
-    private static ImageMetaDatabase instance = null;
+    private static SexyDatabase instance = null;
     private Connection mConnection;
 
-    public static ImageMetaDatabase getInstance() {
+    public static SexyDatabase getInstance() {
         if (instance == null) {
-            instance = new ImageMetaDatabase();
+            instance = new SexyDatabase();
         }
         return instance;
     }
 
-    private ImageMetaDatabase() {
+    private SexyDatabase() {
         try {
+            Class.forName(SexyDatabase.DB_DRIVER);
+
             mConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             DSL.using(mConnection, SQLDialect.H2).createTableIfNotExists(Image.IMAGE);
         } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -107,7 +111,7 @@ public class ImageMetaDatabase {
                 .select()
                 .from(Image.IMAGE)
                 .where(Image.IMAGE.EDITGROUP.eq(editGroup))
-                .limit(1)
+                .limit(100)
                 .fetch()
                 .map(r -> ImageVo.builder()
                         .setUuid(r.getValue(Image.IMAGE.ID).toString())
@@ -124,4 +128,7 @@ public class ImageMetaDatabase {
         return imageVoList;
     }
 
+    public void cleanImages() {
+        DSL.using(mConnection, SQLDialect.H2).deleteFrom(Image.IMAGE).execute();
+    }
 }
