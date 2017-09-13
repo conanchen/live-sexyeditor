@@ -3,7 +3,7 @@ package net.intellij.plugins.sexyeditor.grpc;
 import com.google.gson.Gson;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import net.intellij.plugins.sexyeditor.database.ImageVo;
+import net.intellij.plugins.sexyeditor.ImageVo;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 

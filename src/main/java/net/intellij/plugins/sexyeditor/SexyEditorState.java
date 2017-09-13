@@ -5,8 +5,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
-import net.intellij.plugins.sexyeditor.database.SexyDatabase;
-import net.intellij.plugins.sexyeditor.database.ImageVo;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -40,10 +38,6 @@ public class SexyEditorState implements PersistentStateComponent<SexyEditorState
 		XmlSerializerUtil.copyBean(state, this);
 
 		for (BackgroundConfiguration c:configs) {
-			List<ImageVo> imageVos = SexyDatabase.getInstance().listImagesBy(c.editorGroup);
-			if(imageVos!=null && imageVos.size() > 0 ){
-				c.setFileImageVos( imageVos);
-			}
 			c.startDownloadImageMetaRefreshIntervalThread();
 		}
 	}

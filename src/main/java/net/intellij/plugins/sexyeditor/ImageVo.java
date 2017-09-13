@@ -1,4 +1,4 @@
-package net.intellij.plugins.sexyeditor.database;
+package net.intellij.plugins.sexyeditor;
 
 import com.google.common.base.Strings;
 

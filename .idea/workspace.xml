@@ -2,16 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="16c73036-362f-45c8-b079-fbf411a338c0" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/SexyServer.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/SexyTestServer.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabase.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabaseSampledata.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabaseSchema.java" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/ImageVo.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/ImageVo.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.form" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabase.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabaseSampledata.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/database/SexyDatabaseSampledata.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/HelloWorldClient.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/HelloWorldClient.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/SexyImageClient.java" afterPath="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/SexyImageClient.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -95,10 +93,10 @@
       <file leaf-file-name="SexyEditorState.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="47" column="9" lean-forward="false" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
+            <state relative-caret-position="224">
+              <caret line="40" column="38" lean-forward="false" selection-start-line="40" selection-start-column="38" selection-end-line="40" selection-end-column="38" />
               <folding>
-                <marker date="1505274894000" expanded="true" signature="520:528" ph="@{...}" />
+                <marker date="1505282367000" expanded="true" signature="401:409" ph="@{...}" />
               </folding>
             </state>
           </provider>
@@ -114,33 +112,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BackgroundConfiguration.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="BackgroundConfiguration.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="439" column="5" lean-forward="false" selection-start-line="439" selection-start-column="5" selection-end-line="439" selection-end-column="5" />
-              <folding>
-                <element signature="e#11004#12952#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SexyEditorListener.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorListener.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+            <state relative-caret-position="210">
+              <caret line="89" column="29" lean-forward="false" selection-start-line="89" selection-start-column="29" selection-end-line="89" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
+      <file leaf-file-name="gradle.run.settings.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/gradle.run.settings.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="recentProjects.xml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/recentProjects.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.gradle">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="222">
-              <caret line="71" column="46" lean-forward="false" selection-start-line="71" selection-start-column="46" selection-end-line="71" selection-end-column="46" />
+            <state relative-caret-position="1230">
+              <caret line="82" column="70" lean-forward="false" selection-start-line="82" selection-start-column="70" selection-end-line="82" selection-end-column="70" />
               <folding />
             </state>
           </provider>
@@ -159,18 +165,8 @@
       <file leaf-file-name="sexyeditor.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/sexyeditor.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SexyEditorConfigurationPanel.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorConfigurationPanel.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+            <state relative-caret-position="180">
+              <caret line="12" column="13" lean-forward="true" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -318,11 +314,6 @@
                 <option name="description" value="Initializes a new Gradle build." />
                 <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
                 <option name="name" value="init" />
-              </ExternalTaskPojo>
-              <ExternalTaskPojo>
-                <option name="description" value="Generates the jOOQ sources from the 'sexy' jOOQ configuration." />
-                <option name="linkedExternalProjectPath" value="$PROJECT_DIR$" />
-                <option name="name" value="generateSexyJooqSchemaSource" />
               </ExternalTaskPojo>
               <ExternalTaskPojo>
                 <option name="description" value="Runs the unit tests." />
@@ -492,8 +483,8 @@
     </option>
     <option name="modificationStamps">
       <map>
-        <entry key="$PROJECT_DIR$" value="3010207078000" />
-        <entry key="$PROJECT_DIR$/build.gradle" value="342984757" />
+        <entry key="$PROJECT_DIR$" value="3010208884000" />
+        <entry key="$PROJECT_DIR$/build.gradle" value="2936524079" />
         <entry key="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" value="918050071" />
         <entry key="$PROJECT_DIR$/settings.gradle" value="1038614937" />
       </map>
@@ -512,8 +503,6 @@
                           <list>
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/gradle.plugin.com.google.protobuf/protobuf-gradle-plugin/0.8.1/508bb7272af61836e76ad0488f0dfc34bf3f398b/protobuf-gradle-plugin-0.8.1-sources.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/gradle.plugin.com.google.protobuf/protobuf-gradle-plugin/0.8.1/bec927395701e09116be606eb1851aa873ee6d50/protobuf-gradle-plugin-0.8.1.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/nu.studer/gradle-jooq-plugin/2.0.7/12b413fafae518ea117e1551089794f60768b781/gradle-jooq-plugin-2.0.7-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/nu.studer/gradle-jooq-plugin/2.0.7/8fc4c9c11e3a2683a379de04479ea666c6a54f1c/gradle-jooq-plugin-2.0.7.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/gradle.plugin.org.jetbrains.intellij.plugins/gradle-intellij-plugin/0.2.17/c7901dd8453769ac32d5199683d1796988923c88/gradle-intellij-plugin-0.2.17-sources.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/gradle.plugin.org.jetbrains.intellij.plugins/gradle-intellij-plugin/0.2.17/4acda997dc40bb8610955d1896bb12e2946cf4c5/gradle-intellij-plugin-0.2.17.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/19.0/91a4d115400e904f22b03a78deb355e9ea803cd4/guava-19.0-sources.jar" />
@@ -522,12 +511,6 @@
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.gradle/osdetector-gradle-plugin/1.4.0/a6bfa3b8bc6b15b8df90893876782dab3096b68f/osdetector-gradle-plugin-1.4.0.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/67313d715fbf0ea4fd0bdb69217fb77f807a8ce5/commons-lang-2.6-sources.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq/3.9.5/43a14a5db7e9be69f20c781ec4a7553c28319fd/jooq-3.9.5-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq/3.9.5/7a0eecd259b304d08288929a10d75381b818b9b4/jooq-3.9.5.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq-meta/3.9.5/74b4f13bd7c11041162cd0457df9ed2aa092586b/jooq-meta-3.9.5-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq-meta/3.9.5/1e050c3ba24aee7b67be34979648fdbf89798776/jooq-meta-3.9.5.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq-codegen/3.9.5/83292e3a5d8d7fd1cd8d3faff8cb91986e6f9790/jooq-codegen-3.9.5-sources.jar" />
-                            <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jooq/jooq-codegen/3.9.5/963b501990e3087997df48ead25d51364e796c01/jooq-codegen-3.9.5.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/5991ca87ef1fb5544943d9abc5a9a37583fabe03/annotations-13.0-sources.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar" />
                             <option value="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.intellij/plugin-repository-rest-client/0.3.21/cab97091a70b6a4fcbed414043d76f8c1180feb1/plugin-repository-rest-client-0.3.21-sources.jar" />
@@ -796,11 +779,11 @@
         <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/HelloWorldClient.java" />
         <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/grpc/SexyTestServer.java" />
         <option value="$PROJECT_DIR$/build/idea-sandbox/system/log/idea.log" />
-        <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java" />
         <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.form" />
-        <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java" />
         <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.java" />
+        <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java" />
       </list>
     </option>
   </component>
@@ -850,6 +833,32 @@
             <path>
               <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
               <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="idea-sandbox" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="idea-sandbox" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="idea-sandbox" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="options" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -872,26 +881,21 @@
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="sexyeditor" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
-              <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="sexyeditor" type="462c0819:PsiDirectoryNode" />
-              <item name="database" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
-              <item name="live-sexyeditor" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="proto" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
               <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Gradle: com.jetbrains:ideaIC:2016.3" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="live-sexyeditor" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Gradle: com.jetbrains:ideaIC:2016.3" type="70bed36:NamedLibraryElementNode" />
+              <item name="idea.jar" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -915,6 +919,7 @@
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.28902954" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="H2" />
+    <property name="extract.method.default.visibility" value="private" />
   </component>
   <component name="PsiViewer.ProjectComponent">
     <option name="HIGHLIGHT" value="false" />
@@ -1235,11 +1240,18 @@
       <option name="project" value="LOCAL" />
       <updated>1505120071887</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="add grpc Image Server">
+      <created>1505281673164</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1505281673164</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="171714000" />
+    <option name="totallyTimeSpent" value="175454000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2" y="23" width="1280" height="773" extended-state="6" />
@@ -1250,18 +1262,18 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.60914457" sideWeight="0.54523426" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35693216" sideWeight="0.22859451" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="PsiViewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14701131" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18497577" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5412979" sideWeight="0.6526656" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.60914457" sideWeight="0.45476574" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35250738" sideWeight="0.720517" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3938053" sideWeight="0.6526656" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.52359885" sideWeight="0.7714055" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23451327" sideWeight="0.720517" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25201938" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23344104" sideWeight="0.5" order="8" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22051696" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20943953" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30048466" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.30048466" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1567,14 +1579,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/gradle.run.settings.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/IntelliLang.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1687,14 +1691,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/recentProjects.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/project.default.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1766,42 +1762,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/sexyeditor.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundBorder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="439" column="5" lean-forward="false" selection-start-line="439" selection-start-column="5" selection-end-line="439" selection-end-column="5" />
-          <folding>
-            <element signature="e#11004#12952#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="47" column="9" lean-forward="false" selection-start-line="47" selection-start-column="9" selection-end-line="47" selection-end-column="9" />
-          <folding>
-            <marker date="1505274894000" expanded="true" signature="520:528" ph="@{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BorderConfig.form">
       <provider selected="true" editor-type-id="ui-designer">
         <state />
@@ -1819,10 +1779,60 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/SexyEditorState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="40" column="38" lean-forward="false" selection-start-line="40" selection-start-column="38" selection-end-line="40" selection-end-column="38" />
+          <folding>
+            <marker date="1505282367000" expanded="true" signature="401:409" ph="@{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundBorder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="19" column="13" lean-forward="false" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="71" column="46" lean-forward="false" selection-start-line="71" selection-start-column="46" selection-end-line="71" selection-end-column="46" />
+        <state relative-caret-position="1230">
+          <caret line="82" column="70" lean-forward="false" selection-start-line="82" selection-start-column="70" selection-end-line="82" selection-end-column="70" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/gradle.run.settings.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/recentProjects.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/idea-sandbox/config/options/sexyeditor.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="13" lean-forward="true" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/net/intellij/plugins/sexyeditor/BackgroundConfiguration.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="89" column="29" lean-forward="false" selection-start-line="89" selection-start-column="29" selection-end-line="89" selection-end-column="29" />
           <folding />
         </state>
       </provider>

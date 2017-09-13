@@ -1,13 +1,10 @@
 package net.intellij.plugins.sexyeditor;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.EvictingQueue;
 import com.intellij.openapi.fileTypes.WildcardFileNameMatcher;
 import io.reactivex.Observable;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
-import net.intellij.plugins.sexyeditor.database.ImageVo;
-import net.intellij.plugins.sexyeditor.database.SexyDatabase;
-import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
 import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
 
 import java.util.*;
@@ -70,11 +67,6 @@ public class BackgroundConfiguration {
     protected String[] fileNames;
 
     /**
-     * List of images.
-     */
-    protected List<ImageVo> fileImageVos = new ArrayList<>();
-
-    /**
      * Is the next image to load random one from the list.
      */
     protected boolean random;
@@ -95,7 +87,11 @@ public class BackgroundConfiguration {
     private boolean downloadSexyImage;
     private boolean downloadPornImage;
     private boolean downloadPosterImage;
-
+    private final static int REFRESH_INTERVAL_SECONDS = 10;
+    /**
+     * Queue of live images .
+     */
+    private EvictingQueue<ImageVo> mFileImageVos = EvictingQueue.create(100);
 
     // ---------------------------------------------------------------- access
 
@@ -147,14 +143,6 @@ public class BackgroundConfiguration {
         this.fileNames = fileNames;
     }
 
-
-    public List<ImageVo> getFileImageVos() {
-        return fileImageVos;
-    }
-
-    public void setFileImageVos(List<ImageVo> fileImageVos) {
-        this.fileImageVos = fileImageVos;
-    }
 
     public boolean isRandom() {
         return random;
@@ -284,7 +272,7 @@ public class BackgroundConfiguration {
      */
     public String getNextImage() {
         int totalFiles = fileNames == null ? 0 : fileNames.length;
-        int totalImageVos = fileImageVos == null ? 0 : fileImageVos.size();
+        int totalImageVos = mFileImageVos == null ? 0 : mFileImageVos.size();
         if (totalFiles == 0 && totalImageVos == 0) {
             return null;
         }
@@ -300,9 +288,12 @@ public class BackgroundConfiguration {
         if (imageIndex < totalFiles) {
             return fileNames[imageIndex];
         } else {
-            ImageVo imageVo = fileImageVos.get(imageIndex - totalFiles);
-            return imageVo.url;
+            ImageVo imageVo = mFileImageVos.peek();
+            if (imageVo != null) {
+                return imageVo.url;
+            }
         }
+        return null;
     }
 
 
@@ -392,42 +383,28 @@ public class BackgroundConfiguration {
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
             //TODO: using grpc to download images metadata
             SexyImageClient client = new SexyImageClient(imageServerHost, imageServerPort);
+
             Observable
-                    .interval(slideshowPause, TimeUnit.MILLISECONDS)
+                    .interval(REFRESH_INTERVAL_SECONDS, TimeUnit.MILLISECONDS)
                     .takeWhile(aLong -> imageServerConnected)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.io())
                     .subscribe(aLong -> {
                                 if (downloadNormalImage) {
-                                    List<ImageVo> imageVos = client.listImages("NORMAL");
-                                    if (imageVos != null) {
-                                        for (ImageVo im : imageVos) {
-                                            SexyDatabase.getInstance().saveImage(im);
-                                        }
-                                    }
-                                    logger.info(String.format("imageServerConnected=%b aLong=%d : downloadImage=[%s]", imageServerConnected, aLong, "NORMAL"));
+                                    refreshImages(client, "NORMAl");
+                                }
+
+                                if (downloadPosterImage) {
+                                    refreshImages(client, "POSTER");
                                 }
 
                                 if (downloadSexyImage) {
-                                    List<ImageVo> imageVos = client.listImages("SEXY");
-                                    if (imageVos != null) {
-                                        for (ImageVo im : imageVos) {
-                                            SexyDatabase.getInstance().saveImage(im);
-                                        }
-                                    }
-                                    logger.info(String.format("imageServerConnected=%b aLong=%d : downloadImage=[%s]", imageServerConnected, aLong, "SEXY"));
+                                    refreshImages(client, "SEXY");
                                 }
 
                                 if (downloadPornImage) {
-                                    List<ImageVo> imageVos = client.listImages("PORN");
-                                    if (imageVos != null) {
-                                        for (ImageVo im : imageVos) {
-                                            SexyDatabase.getInstance().saveImage(im);
-                                        }
-                                    }
-                                    logger.info(String.format("imageServerConnected=%b aLong=%d : downloadImage=[%s]", imageServerConnected, aLong, "PORN"));
+                                    refreshImages(client, "PORN");
                                 }
-
                             },
                             throwable -> {
                                 logger.severe(throwable.getMessage());
@@ -437,6 +414,16 @@ public class BackgroundConfiguration {
                             }
                     );
         }
+    }
+
+    private void refreshImages(SexyImageClient client, String type) {
+        List<ImageVo> imageVos = client.listImages(type);
+        if (imageVos != null) {
+            for (ImageVo vo : imageVos) {
+                mFileImageVos.add(vo);
+            }
+        }
+        logger.info(String.format("imageServerConnected=%b downloadImage=[%s]", imageServerConnected, type));
     }
 
     // ---------------------------------------------------------------- toString
