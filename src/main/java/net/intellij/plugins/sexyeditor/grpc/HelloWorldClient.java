@@ -44,7 +44,7 @@ public class HelloWorldClient {
         String name = args.length > 0 ? args[0] : "unknown";
  
         try { 
-            client.greet(name);
+            logger.info(String.format("greetmessage=[%s]",client.greet(name)));
         } finally { 
             client.shutdown();
         } 

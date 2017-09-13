@@ -21,7 +21,7 @@ public class SexyImageClient {
     private static final Logger logger = Logger.getLogger(SexyImageClient.class.getName());
 
     private final ManagedChannel channel;
-    private ImageGrpc.ImageBlockingStub blockingStub;
+    private final ImageGrpc.ImageBlockingStub blockingStub;
 
     public SexyImageClient(String hostname, int port) {
         channel = ManagedChannelBuilder.forAddress(hostname, port)
@@ -69,10 +69,10 @@ public class SexyImageClient {
         String type = args.length > 0 ? args[0] : "NORMAL";
 
         try {
-           List<ImageVo> responses = client.listImages(type);
-           for(int i = 0 ; i<responses.size();i++){
-               System.out.println(String.format("%d : imageVo=%s",i, gson.toJson(responses.get(i))));
-           }
+            List<ImageVo> responses = client.listImages(type);
+            for (int i = 0; i < responses.size(); i++) {
+                System.out.println(String.format("%d : imageVo=%s", i, gson.toJson(responses.get(i))));
+            }
         } finally {
             client.shutdown();
         }

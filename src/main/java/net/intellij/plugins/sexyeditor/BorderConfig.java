@@ -2,21 +2,23 @@ package net.intellij.plugins.sexyeditor;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /**
  * Background configuration UI.
  */
 public class BorderConfig {
+    private static final Logger logger = Logger.getLogger(BorderConfig.class.getName());
 
     private JTextField nameTextField;
     private JSlider opacitySlider;
@@ -33,14 +35,12 @@ public class BorderConfig {
     private JTextArea fileListTextArea;
     private JTextField positionOffsetTextField;
     private JLabel hintsLabel;
-    private JCheckBox shareCheckBox;
     private JPanel serverPanel;
-    private JTextField refreshIntervalTextField;
     private JTextField imageServerHostTextField;
-    private JTextField maxDownloadTextField;
     private JButton testImageServerButton;
     private JTextField imageServerPortTextField;
     private JCheckBox downloadNormalCheckBox;
+    private JCheckBox downloadPosterCheckBox;
     private JCheckBox downloadSexyCheckBox;
     private JCheckBox downloadPornCheckBox;
 
@@ -114,168 +114,21 @@ public class BorderConfig {
             }
         });
 
+        imageServerHostTextField.addKeyListener(new ImageServerConnectedListener());
+        imageServerPortTextField.addKeyListener(new ImageServerConnectedListener());
         testImageServerButton.addActionListener(e -> {
             String hostport = imageServerHostTextField.getText() + ":" + imageServerPortTextField.getText();
-
-            if (true) {
+            HelloWorldClient helloWorldClient = new HelloWorldClient(imageServerHostTextField.getText(), Integer.valueOf(imageServerPortTextField.getText()));
+            String helloMessage = helloWorldClient.greet("Connect");
+            if (helloMessage != null && helloMessage.indexOf("Connect") > 0) {
+                config.setImageServerConnected(true);
                 JOptionPane.showMessageDialog(new JFrame(), "Image server (" + hostport + ") connected sucessfully.\n Eggs are not supposed to be green.");
+                config.startDownloadImageMetaRefreshIntervalThread();
             } else {
+                config.setImageServerConnected(false);
                 JOptionPane.showMessageDialog(new JFrame(), "Image server (" + hostport + ") connected failed.\n Eggs are not supposed to be red.");
             }
         });
-    }
-
-    // ---------------------------------------------------------------- LSRM
-
-    private BackgroundConfiguration config;
-
-    /**
-     * Loads configuration to GUI.
-     */
-    public void load(BackgroundConfiguration config) {
-        this.config = config;
-        nameTextField.setText(config.getName());
-        matchTextField.setText(config.getEditorGroup());
-        opacitySlider.setValue((int) (config.getOpacity() * 100));
-        positionComboBox.setSelectedIndex(config.getPosition());
-        positionOffsetTextField.setText(String.valueOf(config.getPositionOffset()));
-
-        if (shrinkCheckBox.isSelected() != config.isShrink()) {
-            shrinkCheckBox.doClick();
-        }
-
-        shrinkSlider.setValue(config.getShrinkValue());
-
-        if (randomCheckBox.isSelected() != config.isRandom()) {
-            randomCheckBox.doClick();
-        }
-
-        if (slideshowCheckBox.isSelected() != config.isSlideshow()) {
-            slideshowCheckBox.doClick();
-        }
-
-        slideShowPause.setText(String.valueOf(config.getSlideshowPause()));
-        fileListTextArea.setText(stringArrayToString(config.getFileNames()));
-
-        imageServerHostTextField.setText(config.getImageServerHost());
-        imageServerPortTextField.setText(String.valueOf(config.getImageServerPort()));
-        maxDownloadTextField.setText(String.valueOf(config.getMaxDownload()));
-        if (downloadNormalCheckBox.isSelected() != config.isDownloadNormalImage()) {
-            downloadNormalCheckBox.doClick();
-        }
-        if (downloadSexyCheckBox.isSelected() != config.isDownloadSexyImage()) {
-            downloadSexyCheckBox.doClick();
-        }
-        if (downloadPornCheckBox.isSelected() != config.isDownloadPornImage()) {
-            downloadPornCheckBox.doClick();
-        }
-
-        refreshIntervalTextField.setText(String.valueOf(config.getRefreshInterval()));
-        if (shareCheckBox.isSelected() != config.isShare()) {
-            shareCheckBox.doClick();
-        }
-
-    }
-
-    /**
-     * Saves configuration from GUI.
-     */
-    public BackgroundConfiguration save() {
-        if (config == null) {
-            return null;
-        }
-        config.setName(nameTextField.getText());
-        config.setEditorGroup(matchTextField.getText());
-        config.setOpacity((float) (opacitySlider.getValue() / 100.0));
-        config.setPosition(positionComboBox.getSelectedIndex());
-        config.setPositionOffset(Integer.valueOf(positionOffsetTextField.getText()));
-        config.setShrink(shrinkCheckBox.isSelected());
-        config.setShrinkValue(shrinkSlider.getValue());
-        config.setRandom(randomCheckBox.isSelected());
-        config.setSlideshow(slideshowCheckBox.isSelected());
-        config.setSlideshowPause(Integer.parseInt(slideShowPause.getText()));
-        config.setFileNames(stringToStringArray(fileListTextArea.getText()));
-
-        //image server config
-        config.setImageServerHost(imageServerHostTextField.getText());
-        config.setImageServerPort(Integer.parseInt(imageServerPortTextField.getText()));
-        config.setShare(shareCheckBox.isSelected());
-        config.setMaxDownload(Integer.parseInt(maxDownloadTextField.getText()));
-        config.setRefreshInterval(Integer.parseInt(refreshIntervalTextField.getText()));
-        config.setDownloadNormalImage(downloadNormalCheckBox.isSelected());
-        config.setDownloadSexyImage(downloadSexyCheckBox.isSelected());
-        config.setDownloadPornImage(downloadPornCheckBox.isSelected());
-
-        return config;
-    }
-
-    /**
-     * Resets configuration to default.
-     */
-    public void reset() {
-        load(new BackgroundConfiguration());
-    }
-
-    /**
-     * Returns <code>true</code> if configuration is modified.
-     */
-    public boolean isModified() {
-        if (config == null) {
-            return false;
-        }
-
-        return !nameTextField.getText().equals(config.getName())
-                || !matchTextField.getText().equals(config.getEditorGroup())
-                || opacitySlider.getValue() != (int) (config.getOpacity() * 100)
-                || positionComboBox.getSelectedIndex() != config.getPosition()
-                || !positionOffsetTextField.getText().equals(String.valueOf(config.getPositionOffset()))
-                || shrinkCheckBox.isSelected() != config.isShrink()
-                || shrinkSlider.getValue() != config.getShrinkValue()
-                || randomCheckBox.isSelected() != config.isRandom()
-                || slideshowCheckBox.isSelected() != config.isSlideshow()
-                || !slideShowPause.getText().equals(String.valueOf(config.getSlideshowPause()))
-                || !fileListTextArea.getText().equals(stringArrayToString(config.getFileNames()))
-                || !imageServerHostTextField.getText().equals(config.getImageServerHost())
-                || !imageServerPortTextField.getText().equals(String.valueOf(config.getImageServerPort()))
-                || !maxDownloadTextField.getText().equals(String.valueOf(config.getMaxDownload()))
-                || !refreshIntervalTextField.getText().equals(String.valueOf(config.getRefreshInterval()))
-                || shareCheckBox.isSelected() != config.isShare()
-                || downloadNormalCheckBox.isSelected() != config.isDownloadNormalImage()
-                || downloadSexyCheckBox.isSelected() != config.isDownloadSexyImage()
-                || downloadPornCheckBox.isSelected() != config.isDownloadPornImage()
-                ;
-    }
-
-    // ---------------------------------------------------------------- util
-
-    private String stringArrayToString(String... strarr) {
-        if (strarr == null) {
-            return "";
-        }
-        StringBuilder result = new StringBuilder();
-        for (String s : strarr) {
-            result.append(s).append('\n');
-        }
-        return result.toString();
-    }
-
-    private String[] stringToStringArray(String s) {
-        if (s == null) {
-            return null;
-        }
-        s = s.trim();
-        if (s.length() == 0) {
-            return null;
-        }
-        StringTokenizer st = new StringTokenizer(s, "\n\r");
-        int total = st.countTokens();
-        String[] result = new String[total];
-        int i = 0;
-        while (st.hasMoreTokens()) {
-            result[i] = st.nextToken().trim();
-            i++;
-        }
-        return result;
     }
 
     {
@@ -370,70 +223,56 @@ public class BorderConfig {
         hintsLabel.setVerticalAlignment(0);
         hintsLabel.setVerticalTextPosition(0);
         borderConfigPanel.add(hintsLabel, new GridConstraints(0, 5, 3, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
-        shareCheckBox = new JCheckBox();
-        shareCheckBox.setText("Share");
-        shareCheckBox.setToolTipText("Share your images with other developers");
-        borderConfigPanel.add(shareCheckBox, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         insertFilesButton = new JButton();
         insertFilesButton.setIcon(new ImageIcon(getClass().getResource("/net/intellij/plugins/sexyeditor/gfx/images.png")));
         insertFilesButton.setText("Insert...");
         borderConfigPanel.add(insertFilesButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, 25), null, 0, false));
         serverPanel = new JPanel();
-        serverPanel.setLayout(new GridLayoutManager(5, 5, new Insets(0, 0, 0, 0), -1, -1));
+        serverPanel.setLayout(new GridLayoutManager(3, 7, new Insets(0, 0, 0, 0), -1, -1));
         borderConfigPanel.add(serverPanel, new GridConstraints(3, 5, 4, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText("Image Server:");
         serverPanel.add(label7, new GridConstraints(0, 0, 2, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label8 = new JLabel();
-        label8.setText("Max Download:");
-        serverPanel.add(label8, new GridConstraints(3, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        maxDownloadTextField = new JTextField();
-        maxDownloadTextField.setText("30");
-        serverPanel.add(maxDownloadTextField, new GridConstraints(3, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label9 = new JLabel();
-        label9.setText("Refresh Interval:");
-        serverPanel.add(label9, new GridConstraints(4, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        refreshIntervalTextField = new JTextField();
-        refreshIntervalTextField.setText("30000");
-        serverPanel.add(refreshIntervalTextField, new GridConstraints(4, 2, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         imageServerHostTextField = new JTextField();
         imageServerHostTextField.setText("192.168.0.101");
-        serverPanel.add(imageServerHostTextField, new GridConstraints(0, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        serverPanel.add(imageServerHostTextField, new GridConstraints(0, 2, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         imageServerPortTextField = new JTextField();
         imageServerPortTextField.setText("6565");
-        serverPanel.add(imageServerPortTextField, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        serverPanel.add(imageServerPortTextField, new GridConstraints(0, 5, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         testImageServerButton = new JButton();
         testImageServerButton.setText("Test Image Server");
-        serverPanel.add(testImageServerButton, new GridConstraints(1, 2, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label10 = new JLabel();
-        label10.setText("Download Category:");
-        serverPanel.add(label10, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        serverPanel.add(testImageServerButton, new GridConstraints(1, 2, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label8 = new JLabel();
+        label8.setText("Download Category:");
+        serverPanel.add(label8, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         downloadNormalCheckBox = new JCheckBox();
+        downloadNormalCheckBox.setSelected(true);
         downloadNormalCheckBox.setText("Normal");
         serverPanel.add(downloadNormalCheckBox, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        downloadPosterCheckBox = new JCheckBox();
+        downloadPosterCheckBox.setText("Poster");
+        serverPanel.add(downloadPosterCheckBox, new GridConstraints(2, 3, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         downloadPornCheckBox = new JCheckBox();
         downloadPornCheckBox.setText("Porn");
-        serverPanel.add(downloadPornCheckBox, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        serverPanel.add(downloadPornCheckBox, new GridConstraints(2, 6, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         downloadSexyCheckBox = new JCheckBox();
         downloadSexyCheckBox.setText("Sexy");
-        serverPanel.add(downloadSexyCheckBox, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        serverPanel.add(downloadSexyCheckBox, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         slideshowCheckBox = new JCheckBox();
         slideshowCheckBox.setText("Slideshow:");
         slideshowCheckBox.setToolTipText("<html>\nIf set images in editor will change while you work:)");
-        borderConfigPanel.add(slideshowCheckBox, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(61, -1), null, 0, false));
+        borderConfigPanel.add(slideshowCheckBox, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(61, -1), null, 0, false));
         slideShowPause = new JTextField();
         slideShowPause.setColumns(10);
         slideShowPause.setEnabled(false);
         slideShowPause.setToolTipText("<html>\nTime between changing the image<br>\nin slideshow mode (in milliseconds).");
-        borderConfigPanel.add(slideShowPause, new GridConstraints(5, 2, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 20), null, 0, false));
+        borderConfigPanel.add(slideShowPause, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 20), null, 0, false));
         label1.setLabelFor(nameTextField);
         label3.setLabelFor(positionComboBox);
         label4.setLabelFor(fileListTextArea);
         label5.setLabelFor(matchTextField);
         label6.setLabelFor(positionOffsetTextField);
         label7.setLabelFor(imageServerHostTextField);
-        label8.setLabelFor(maxDownloadTextField);
-        label9.setLabelFor(refreshIntervalTextField);
     }
 
     /**
@@ -442,4 +281,173 @@ public class BorderConfig {
     public JComponent $$$getRootComponent$$$() {
         return borderConfigPanel;
     }
+
+    private class ImageServerConnectedListener extends KeyAdapter {
+        @Override
+        public void keyReleased(KeyEvent ke) {
+            if (!(ke.getKeyChar() == 27 || ke.getKeyChar() == 65535)) {
+                logger.info("//this section will execute only when user is editing the JTextField\n" +
+                        "config.setImageServerConnected(false);");
+                config.setImageServerConnected(false);
+            }
+        }
+    }
+
+    // ---------------------------------------------------------------- LSRM
+
+    private BackgroundConfiguration config;
+
+    /**
+     * Loads configuration to GUI.
+     */
+    public void load(BackgroundConfiguration config) {
+        this.config = config;
+        nameTextField.setText(config.getName());
+        matchTextField.setText(config.getEditorGroup());
+        opacitySlider.setValue((int) (config.getOpacity() * 100));
+        positionComboBox.setSelectedIndex(config.getPosition());
+        positionOffsetTextField.setText(String.valueOf(config.getPositionOffset()));
+
+        if (shrinkCheckBox.isSelected() != config.isShrink()) {
+            shrinkCheckBox.doClick();
+        }
+
+        shrinkSlider.setValue(config.getShrinkValue());
+
+        if (randomCheckBox.isSelected() != config.isRandom()) {
+            randomCheckBox.doClick();
+        }
+
+        if (slideshowCheckBox.isSelected() != config.isSlideshow()) {
+            slideshowCheckBox.doClick();
+        }
+
+        slideShowPause.setText(String.valueOf(config.getSlideshowPause()));
+        fileListTextArea.setText(stringArrayToString(config.getFileNames()));
+
+        imageServerHostTextField.setText(config.getImageServerHost());
+        imageServerPortTextField.setText(String.valueOf(config.getImageServerPort()));
+
+        if (downloadNormalCheckBox.isSelected() != config.isDownloadNormalImage()) {
+            downloadNormalCheckBox.doClick();
+        }
+
+        if (downloadPosterCheckBox.isSelected() != config.isDownloadNormalImage()) {
+            downloadPosterCheckBox.doClick();
+        }
+
+        if (downloadSexyCheckBox.isSelected() != config.isDownloadSexyImage()) {
+            downloadSexyCheckBox.doClick();
+        }
+
+        if (downloadPornCheckBox.isSelected() != config.isDownloadPornImage()) {
+            downloadPornCheckBox.doClick();
+        }
+
+        if (config.isImageServerConnected()) {
+            testImageServerButton.setText("OK! Test Image Server");
+        } else {
+            testImageServerButton.setText("FAILED! Test Image Server");
+        }
+    }
+
+    /**
+     * Saves configuration from GUI.
+     */
+    public BackgroundConfiguration save() {
+        if (config == null) {
+            return null;
+        }
+        config.setName(nameTextField.getText());
+        config.setEditorGroup(matchTextField.getText());
+        config.setOpacity((float) (opacitySlider.getValue() / 100.0));
+        config.setPosition(positionComboBox.getSelectedIndex());
+        config.setPositionOffset(Integer.valueOf(positionOffsetTextField.getText()));
+        config.setShrink(shrinkCheckBox.isSelected());
+        config.setShrinkValue(shrinkSlider.getValue());
+        config.setRandom(randomCheckBox.isSelected());
+        config.setSlideshow(slideshowCheckBox.isSelected());
+        config.setSlideshowPause(Integer.parseInt(slideShowPause.getText()));
+        config.setFileNames(stringToStringArray(fileListTextArea.getText()));
+
+        //image server config
+        if (config.isImageServerConnected()) {
+            config.setImageServerHost(imageServerHostTextField.getText());
+            config.setImageServerPort(Integer.parseInt(imageServerPortTextField.getText()));
+        }
+        config.setDownloadNormalImage(downloadNormalCheckBox.isSelected());
+        config.setDownloadPosterImage(downloadPosterCheckBox.isSelected());
+        config.setDownloadSexyImage(downloadSexyCheckBox.isSelected());
+        config.setDownloadPornImage(downloadPornCheckBox.isSelected());
+
+        return config;
+    }
+
+    /**
+     * Resets configuration to default.
+     */
+    public void reset() {
+        load(new BackgroundConfiguration());
+    }
+
+    /**
+     * Returns <code>true</code> if configuration is modified.
+     */
+    public boolean isModified() {
+        if (config == null) {
+            return false;
+        }
+
+        return !nameTextField.getText().equals(config.getName())
+                || !matchTextField.getText().equals(config.getEditorGroup())
+                || opacitySlider.getValue() != (int) (config.getOpacity() * 100)
+                || positionComboBox.getSelectedIndex() != config.getPosition()
+                || !positionOffsetTextField.getText().equals(String.valueOf(config.getPositionOffset()))
+                || shrinkCheckBox.isSelected() != config.isShrink()
+                || shrinkSlider.getValue() != config.getShrinkValue()
+                || randomCheckBox.isSelected() != config.isRandom()
+                || slideshowCheckBox.isSelected() != config.isSlideshow()
+                || !slideShowPause.getText().equals(String.valueOf(config.getSlideshowPause()))
+                || !fileListTextArea.getText().equals(stringArrayToString(config.getFileNames()))
+                || !imageServerHostTextField.getText().equals(config.getImageServerHost())
+                || !imageServerPortTextField.getText().equals(String.valueOf(config.getImageServerPort()))
+                || downloadNormalCheckBox.isSelected() != config.isDownloadNormalImage()
+                || downloadPosterCheckBox.isSelected() != config.isDownloadPosterImage()
+                || downloadSexyCheckBox.isSelected() != config.isDownloadSexyImage()
+                || downloadPornCheckBox.isSelected() != config.isDownloadPornImage()
+                ;
+    }
+
+    // ---------------------------------------------------------------- util
+
+    private String stringArrayToString(String... strarr) {
+        if (strarr == null) {
+            return "";
+        }
+        StringBuilder result = new StringBuilder();
+        for (String s : strarr) {
+            result.append(s).append('\n');
+        }
+        return result.toString();
+    }
+
+    private String[] stringToStringArray(String s) {
+        if (s == null) {
+            return null;
+        }
+        s = s.trim();
+        if (s.length() == 0) {
+            return null;
+        }
+        StringTokenizer st = new StringTokenizer(s, "\n\r");
+        int total = st.countTokens();
+        String[] result = new String[total];
+        int i = 0;
+        while (st.hasMoreTokens()) {
+            result[i] = st.nextToken().trim();
+            i++;
+        }
+        return result;
+    }
+
 }

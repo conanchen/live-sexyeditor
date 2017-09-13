@@ -69,7 +69,7 @@ dependencies {
     }
     // https://mvnrepository.com/artifact/commons-validator/commons-validator
     compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
-
+    compile "io.reactivex.rxjava2:rxjava:2.1.3"
 }
 
 

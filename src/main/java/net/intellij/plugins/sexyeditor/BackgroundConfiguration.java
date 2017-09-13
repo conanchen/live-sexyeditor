@@ -1,17 +1,24 @@
 package net.intellij.plugins.sexyeditor;
 
+import com.google.common.base.Strings;
 import com.intellij.openapi.fileTypes.WildcardFileNameMatcher;
+import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 import net.intellij.plugins.sexyeditor.database.ImageVo;
+import net.intellij.plugins.sexyeditor.database.SexyDatabase;
 import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
+import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
 
-import java.util.List;
-import java.util.Random;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Configuration data object for one file group.
  */
 public class BackgroundConfiguration {
+    private static final Logger logger = Logger.getLogger(BackgroundConfiguration.class.getName());
 
     public static final int POSITION_TOP_LEFT = 0;
     public static final int POSITION_TOP_MIDDLE = 1;
@@ -65,7 +72,7 @@ public class BackgroundConfiguration {
     /**
      * List of images.
      */
-    protected List<ImageVo> fileImageVos;
+    protected List<ImageVo> fileImageVos = new ArrayList<>();
 
     /**
      * Is the next image to load random one from the list.
@@ -84,12 +91,10 @@ public class BackgroundConfiguration {
     private String imageServerHost;
     private int imageServerPort;
     private boolean imageServerConnected = false;
-    private boolean share;
-    private int maxDownload;
-    private int refreshInterval;
     private boolean downloadNormalImage;
     private boolean downloadSexyImage;
     private boolean downloadPornImage;
+    private boolean downloadPosterImage;
 
 
     // ---------------------------------------------------------------- access
@@ -218,34 +223,6 @@ public class BackgroundConfiguration {
 
     public void setImageServerConnected(boolean imageServerConnected) {
         this.imageServerConnected = imageServerConnected;
-        closeRefreshDownloadImageThread();
-        if(imageServerConnected){
-            createRefreshDownloadImageThread();
-        }
-    }
-
-    public void setShare(boolean share) {
-        this.share = share;
-    }
-
-    public boolean isShare() {
-        return share;
-    }
-
-    public void setMaxDownload(int maxDownload) {
-        this.maxDownload = maxDownload;
-    }
-
-    public int getMaxDownload() {
-        return maxDownload;
-    }
-
-    public void setRefreshInterval(int refreshInterval) {
-        this.refreshInterval = refreshInterval;
-    }
-
-    public int getRefreshInterval() {
-        return refreshInterval;
     }
 
     public boolean isDownloadNormalImage() {
@@ -254,6 +231,14 @@ public class BackgroundConfiguration {
 
     public void setDownloadNormalImage(boolean downloadNormalImage) {
         this.downloadNormalImage = downloadNormalImage;
+    }
+
+    public void setDownloadPosterImage(boolean downloadPosterImage) {
+        this.downloadPosterImage = downloadPosterImage;
+    }
+
+    public boolean isDownloadPosterImage() {
+        return downloadPosterImage;
     }
 
     public boolean isDownloadSexyImage() {
@@ -298,11 +283,8 @@ public class BackgroundConfiguration {
      * returns the very next image, otherwise, the random one.
      */
     public String getNextImage() {
-        if (fileNames == null || fileImageVos == null || fileImageVos.size() == 0) {
-            return null;
-        }
-        int totalFiles = fileNames.length;
-        int totalImageVos = fileImageVos.size();
+        int totalFiles = fileNames == null ? 0 : fileNames.length;
+        int totalImageVos = fileImageVos == null ? 0 : fileImageVos.size();
         if (totalFiles == 0 && totalImageVos == 0) {
             return null;
         }
@@ -353,7 +335,6 @@ public class BackgroundConfiguration {
 
 
     private Thread slideshowThread;
-    private Thread refreshDownloadImageThread;
 
     /**
      * Creates new slideshow thread if it doesn't exist. Thread waits for specified time
@@ -405,48 +386,58 @@ public class BackgroundConfiguration {
         slideshowThread = null;
     }
 
+    public void startDownloadImageMetaRefreshIntervalThread() {
+        if (!Strings.isNullOrEmpty(imageServerHost)) {
+            logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
+                    "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
+            //TODO: using grpc to download images metadata
+            SexyImageClient client = new SexyImageClient(imageServerHost, imageServerPort);
+            Observable
+                    .interval(slideshowPause, TimeUnit.MILLISECONDS)
+                    .takeWhile(aLong -> imageServerConnected)
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                                if (downloadNormalImage) {
+                                    List<ImageVo> imageVos = client.listImages("NORMAL");
+                                    if (imageVos != null) {
+                                        for (ImageVo im : imageVos) {
+                                            SexyDatabase.getInstance().saveImage(im);
+                                        }
+                                    }
+                                    logger.info(String.format("imageServerConnected=%b aLong=%d : downloadImage=[%s]", imageServerConnected, aLong, "NORMAL"));
+                                }
 
-    //TODO: using grpc to download images metadata
-    private void createRefreshDownloadImageThread() {
+                                if (downloadSexyImage) {
+                                    List<ImageVo> imageVos = client.listImages("SEXY");
+                                    if (imageVos != null) {
+                                        for (ImageVo im : imageVos) {
+                                            SexyDatabase.getInstance().saveImage(im);
+                                        }
+                                    }
+                                    logger.info(String.format("imageServerConnected=%b aLong=%d : downloadImage=[%s]", imageServerConnected, aLong, "SEXY"));
+                                }
 
-        if (refreshDownloadImageThread != null) {
-            return;
+                                if (downloadPornImage) {
+                                    List<ImageVo> imageVos = client.listImages("PORN");
+                                    if (imageVos != null) {
+                                        for (ImageVo im : imageVos) {
+                                            SexyDatabase.getInstance().saveImage(im);
+                                        }
+                                    }
+                                    logger.info(String.format("imageServerConnected=%b aLong=%d : downloadImage=[%s]", imageServerConnected, aLong, "PORN"));
+                                }
+
+                            },
+                            throwable -> {
+                                logger.severe(throwable.getMessage());
+                            },
+                            () -> {
+                                logger.info("finish refreshDownloadImageThread");
+                            }
+                    );
         }
-        refreshDownloadImageThread = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        sleep(refreshInterval);
-                    } catch (InterruptedException iex) {
-                    }
-                    HelloWorldClient client = new HelloWorldClient(imageServerHost, imageServerPort);
-                    client.greet("refreshDownloadImageThread ");
-                }
-            }
-        };
-        refreshDownloadImageThread.setDaemon(true);
-        refreshDownloadImageThread.setPriority(Thread.MIN_PRIORITY);
-        refreshDownloadImageThread.start();
     }
-    /**
-     * Closes the thread. Under the synchronized lock.
-     */
-    private void closeRefreshDownloadImageThread() {
-        if (refreshDownloadImageThread == null) {
-            return;
-        }
-        refreshDownloadImageThread.interrupt();
-        while (refreshDownloadImageThread.isAlive()) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException iex) {
-                //ignore
-            }
-        }
-        refreshDownloadImageThread = null;
-    }
-
 
     // ---------------------------------------------------------------- toString
 

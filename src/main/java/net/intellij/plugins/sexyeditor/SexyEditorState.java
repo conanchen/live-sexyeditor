@@ -44,6 +44,7 @@ public class SexyEditorState implements PersistentStateComponent<SexyEditorState
 			if(imageVos!=null && imageVos.size() > 0 ){
 				c.setFileImageVos( imageVos);
 			}
+			c.startDownloadImageMetaRefreshIntervalThread();
 		}
 	}
 
