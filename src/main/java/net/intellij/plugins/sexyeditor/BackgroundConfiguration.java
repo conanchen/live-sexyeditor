@@ -93,10 +93,10 @@ public class BackgroundConfiguration {
     /**
      * Queue of live images .
      */
-    private final static int IMAGE_QUEUE__CAPACITY = 30;
-    private final static int IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY = 5;
+    private final static int IMAGE_QUEUE_CAPACITY = 30;
+    private final static int IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY = IMAGE_QUEUE_CAPACITY / 5;
     private final static int IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS = 10; //300
-    private EvictingQueue<ImageVo> mFileImageVos = EvictingQueue.create(IMAGE_QUEUE__CAPACITY);
+    private EvictingQueue<ImageVo> mFileImageVos = EvictingQueue.create(IMAGE_QUEUE_CAPACITY);
 
     // ---------------------------------------------------------------- access
 
@@ -404,7 +404,8 @@ public class BackgroundConfiguration {
             SexyImageClient client = new SexyImageClient(imageServerHost, imageServerPort, callback);
             Observable
                     .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                    .takeWhile(aLong -> imageServerConnected)
+                    .takeWhile(aLong -> imageServerConnected
+                            && mFileImageVos.remainingCapacity() > 0)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.io())
                     .subscribe(aLong -> {
