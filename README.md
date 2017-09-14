@@ -6,7 +6,7 @@ forked https://github.com/igr/idea-sexyeditor
 
 grpc + protobuf 3  
 
-![images/sexy-girl.jpg](./images/sexy-girl.jpg =300x300)
-![images/sexy-girl04.jpg](./images/sexy-girl04.jpg =300x300)
-![images/sexy-girl08.jpg](./images/sexy-girl08.jpg =300x300)
-![images/sexy-girl09.jpg](./images/sexy-girl09.jpg =300x300)
+<img src="images/sexy-girl.jpg" width="300" height="300">
+<img src="images/sexy-girl04.jpg" width="300" height="300">
+<img src="images/sexy-girl08.jpg" width="300" height="300">
+<img src="images/sexy-girl09.jpg" width="300" height="300">
