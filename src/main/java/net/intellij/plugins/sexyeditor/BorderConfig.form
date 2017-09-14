@@ -315,7 +315,7 @@
         <properties>
           <columns value="10"/>
           <enabled value="false"/>
-          <toolTipText value="&lt;html&gt;&#10;Time between changing the image&lt;br&gt;&#10;in slideshow mode (in milliseconds)." noi18n="true"/>
+          <toolTipText value="&lt;html&gt;&#10;Time between changing the image&lt;br&gt;&#10;in slideshow mode (in seconds)." noi18n="true"/>
         </properties>
       </component>
     </children>

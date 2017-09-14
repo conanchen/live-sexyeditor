@@ -1,5 +1,6 @@
 package net.intellij.plugins.sexyeditor.grpc;
 
+import com.google.gson.Gson;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 
 public class SexyTestServer {
 
+    private final static Gson gson = new Gson();
     private static final Logger logger = Logger.getLogger(SexyTestServer.class.getName());
 
     private int port = 42420;
@@ -79,51 +81,73 @@ public class SexyTestServer {
     }
 
     private class ImageImpl extends ImageGrpc.ImageImplBase {
-
         @Override
-        public void listImages(ImageOuterClass.ImageRequest request,
-                               StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
-            Random r = new Random();
-            int n = r.nextInt(3);
-            if (n == 0) {
-                ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
-                        .newBuilder()
-                        .setUuid(UUID.randomUUID().toString())
-                        .setUrl("http://n.7k7kimg.cn/2013/0316/1363403616970.jpg")
-                        .setType("NORMAL")
-                        .build();
-                responseObserver.onNext(response);
-                logger.info(String.format("listImages response.url=[%s]", response.getUrl()));
-            } else if (n == 1) {
+        public StreamObserver<ImageOuterClass.ImageRequest> listMessages(StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
+            return new StreamObserver<ImageOuterClass.ImageRequest>() {
 
-                ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
-                        .newBuilder()
-                        .setUuid(UUID.randomUUID().toString())
-                        .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
-                        .setType("NORMAL")
-                        .build();
-                responseObserver.onNext(response);
-                logger.info(String.format("listImages response.url=[%s]", response.getUrl()));
-            } else {
-                ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
-                        .newBuilder()
-                        .setUuid(UUID.randomUUID().toString())
-                        .setUrl("http://n.7k7kimg.cn/2013/0316/1363403583271.jpg")
-                        .setType("NORMAL")
-                        .build();
-                responseObserver.onNext(response);
-                logger.info(String.format("listImages response.url=[%s]", response.getUrl()));
-            }
-            responseObserver.onCompleted();
-//
-//            string uuid = 1;
-//            string url = 2;
-//            string title = 3;
-//            string desc = 4;
-//            string type = 5;//NORMAL,SEXY,PORN
-//
-//            int64 lastUpdated = 6;
-//            bool active = 7;
+                @Override
+                public void onNext(ImageOuterClass.ImageRequest value) {
+                    logger.info(String.format("\nonNext --------------------------normal=%b,poster=%b,sexy=%b,porn=%b",value.getNormal(),value.getPoster(),value.getSexy(),value.getPorn()));
+
+                    if (value.getNormal()) {
+                        ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
+                                .newBuilder()
+                                .setUuid(UUID.randomUUID().toString())
+                                .setUrl("http://n.7k7kimg.cn/2013/0316/1363403616970.jpg")
+                                .setInfoUrl("http://www.baidu.com")
+                                .setType("NORMAL")
+                                .build();
+                        responseObserver.onNext(response);
+                        logger.info(String.format("onNext url=[%s]", response.getUrl()));
+                    }
+
+                    if (value.getPoster()) {
+                        ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
+                                .newBuilder()
+                                .setUuid(UUID.randomUUID().toString())
+                                .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
+                                .setInfoUrl("http://www.qq.com")
+                                .setType("POSTER")
+                                .build();
+                        responseObserver.onNext(response);
+                        logger.info(String.format("onNext url=[%s]", response.getUrl()));
+                    }
+
+                    if (value.getSexy()) {
+                        ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
+                                .newBuilder()
+                                .setUuid(UUID.randomUUID().toString())
+                                .setUrl("http://n.7k7kimg.cn/2013/0316/1363403583271.jpg")
+                                .setInfoUrl("http://www.sohu.com")
+                                .setType("SEXY")
+                                .build();
+                        responseObserver.onNext(response);
+                        logger.info(String.format("onNext url=[%s]", response.getUrl()));
+                    }
+
+                    if (value.getPorn()) {
+                        ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
+                                .newBuilder()
+                                .setUuid(UUID.randomUUID().toString())
+                                .setUrl("http://www.zjol.com.cn/pic/0/01/35/25/1352581_955017.jpg")
+                                .setInfoUrl("http://www.163.com")
+                                .setType("PORN")
+                                .build();
+                        responseObserver.onNext(response);
+                        logger.info(String.format("onNext url=[%s]", response.getUrl()));
+                    }
+                }
+
+                @Override
+                public void onError(Throwable t) {
+
+                }
+
+                @Override
+                public void onCompleted() {
+
+                }
+            };
         }
     }
 }

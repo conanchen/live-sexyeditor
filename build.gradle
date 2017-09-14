@@ -112,7 +112,10 @@ project.afterEvaluate {
                     new File(intellij.ideaDependency.classes, "lib/studio-profiler-grpc-1.0-jarjar.jar").getAbsolutePath())
 
 //            project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
-
+            project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            project.logger.lifecycle("~~~1. Run Task BuildDependents To Compile Protobuf~~~~~~~~~~~");
+            project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
     }
 }

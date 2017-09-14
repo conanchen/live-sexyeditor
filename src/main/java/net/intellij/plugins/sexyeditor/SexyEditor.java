@@ -39,6 +39,7 @@ public class SexyEditor implements ApplicationComponent {
 		}
 		editorListener = new SexyEditorListener(state);
 		EditorFactory.getInstance().addEditorFactoryListener(editorListener, () -> editorListener = null);
+
 	}
 
 	/**

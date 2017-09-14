@@ -2,12 +2,15 @@ package net.intellij.plugins.sexyeditor;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.EvictingQueue;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.fileTypes.WildcardFileNameMatcher;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import net.intellij.plugins.sexyeditor.action.SexyAction;
 import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
 
-import java.util.*;
+import java.util.Random;
+import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -79,7 +82,7 @@ public class BackgroundConfiguration {
     /**
      * Pause in milliseconds between two slides.
      */
-    protected int slideshowPause = 3000;
+    protected int slideshowPause = 3;
     private String imageServerHost;
     private int imageServerPort;
     private boolean imageServerConnected = false;
@@ -87,11 +90,13 @@ public class BackgroundConfiguration {
     private boolean downloadSexyImage;
     private boolean downloadPornImage;
     private boolean downloadPosterImage;
-    private final static int REFRESH_INTERVAL_SECONDS = 10;
     /**
      * Queue of live images .
      */
-    private EvictingQueue<ImageVo> mFileImageVos = EvictingQueue.create(100);
+    private final static int IMAGE_QUEUE__CAPACITY = 30;
+    private final static int IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY = 5;
+    private final static int IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS = 10; //300
+    private EvictingQueue<ImageVo> mFileImageVos = EvictingQueue.create(IMAGE_QUEUE__CAPACITY);
 
     // ---------------------------------------------------------------- access
 
@@ -285,11 +290,18 @@ public class BackgroundConfiguration {
                 imageIndex = 0;
             }
         }
+        ActionManager am = ActionManager.getInstance();
+        SexyAction action = (SexyAction) am.getAction("LiveSexyEditor.SexyAction");
         if (imageIndex < totalFiles) {
+            action.setInfoUrl(BorderConfig.PROJECT_PAGE);
             return fileNames[imageIndex];
         } else {
-            ImageVo imageVo = mFileImageVos.peek();
+            ImageVo imageVo = mFileImageVos.poll();
             if (imageVo != null) {
+                if (mFileImageVos.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
+                    mFileImageVos.add(imageVo);
+                }
+                action.setInfoUrl(imageVo.infoUrl);
                 return imageVo.url;
             }
         }
@@ -341,7 +353,7 @@ public class BackgroundConfiguration {
             public void run() {
                 while (slideshow) {
                     try {
-                        sleep(slideshowPause);
+                        sleep(slideshowPause * 1000);
                     } catch (InterruptedException iex) {
                         if (!slideshow) {
                             break;
@@ -377,53 +389,39 @@ public class BackgroundConfiguration {
         slideshowThread = null;
     }
 
+    SexyImageClient.Callback callback = new SexyImageClient.Callback() {
+        @Override
+        public void onImagemetaReceived(ImageVo imageVo) {
+            mFileImageVos.add(imageVo);
+        }
+    };
+
     public void startDownloadImageMetaRefreshIntervalThread() {
         if (!Strings.isNullOrEmpty(imageServerHost)) {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
-            //TODO: using grpc to download images metadata
-            SexyImageClient client = new SexyImageClient(imageServerHost, imageServerPort);
-
+            //using grpc to download images metadata
+            SexyImageClient client = new SexyImageClient(imageServerHost, imageServerPort, callback);
             Observable
-                    .interval(REFRESH_INTERVAL_SECONDS, TimeUnit.MILLISECONDS)
+                    .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
                     .takeWhile(aLong -> imageServerConnected)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.io())
                     .subscribe(aLong -> {
-                                if (downloadNormalImage) {
-                                    refreshImages(client, "NORMAl");
-                                }
-
-                                if (downloadPosterImage) {
-                                    refreshImages(client, "POSTER");
-                                }
-
-                                if (downloadSexyImage) {
-                                    refreshImages(client, "SEXY");
-                                }
-
-                                if (downloadPornImage) {
-                                    refreshImages(client, "PORN");
-                                }
+                                client.refreshImages(downloadNormalImage,
+                                        downloadPosterImage,
+                                        downloadSexyImage,
+                                        downloadPornImage);
                             },
                             throwable -> {
                                 logger.severe(throwable.getMessage());
+                                imageServerConnected = false;
                             },
                             () -> {
                                 logger.info("finish refreshDownloadImageThread");
                             }
                     );
         }
-    }
-
-    private void refreshImages(SexyImageClient client, String type) {
-        List<ImageVo> imageVos = client.listImages(type);
-        if (imageVos != null) {
-            for (ImageVo vo : imageVos) {
-                mFileImageVos.add(vo);
-            }
-        }
-        logger.info(String.format("imageServerConnected=%b downloadImage=[%s]", imageServerConnected, type));
     }
 
     // ---------------------------------------------------------------- toString

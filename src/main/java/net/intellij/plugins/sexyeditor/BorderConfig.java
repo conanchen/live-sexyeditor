@@ -6,7 +6,10 @@ import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -19,6 +22,7 @@ import java.util.logging.Logger;
  */
 public class BorderConfig {
     private static final Logger logger = Logger.getLogger(BorderConfig.class.getName());
+    public static final String PROJECT_PAGE = "https://github.com/conanchen/live-sexyeditor";
 
     private JTextField nameTextField;
     private JSlider opacitySlider;
@@ -107,7 +111,7 @@ public class BorderConfig {
             @Override
             public void mouseClicked(MouseEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/conanchen/live-sexyeditor"));
+                    Desktop.getDesktop().browse(new URI(PROJECT_PAGE));
                 } catch (URISyntaxException | IOException ex) {
                     //It looks like there's a problem
                 }
@@ -265,7 +269,7 @@ public class BorderConfig {
         slideShowPause = new JTextField();
         slideShowPause.setColumns(10);
         slideShowPause.setEnabled(false);
-        slideShowPause.setToolTipText("<html>\nTime between changing the image<br>\nin slideshow mode (in milliseconds).");
+        slideShowPause.setToolTipText("<html>\nTime between changing the image<br>\nin slideshow mode (in seconds).");
         borderConfigPanel.add(slideShowPause, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 20), null, 0, false));
         label1.setLabelFor(nameTextField);
         label3.setLabelFor(positionComboBox);

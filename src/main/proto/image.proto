@@ -21,27 +21,28 @@ service Image {
 
     // A server-to-client streaming RPC.
     //
-    // Obtains the Images whose status are after the given lastUpdated.  Results are
+    // Obtains images whose types are the given normal/poster/sexy/porn.  Results are
     // streamed rather than returned at once (e.g. in a response message with a
     // repeated field), as the lastUpdated maybe an very old time and contain a
     // huge number of images.
-    rpc ListImages (ImageRequest) returns (stream ImageResponse) {
+    rpc ListMessages (stream ImageRequest) returns (stream ImageResponse) {
     }
 }
 
 message ImageRequest {
-    int64 afterLastUpdated = 1;
-    int32 pageSize = 2;
-
+    bool normal = 1;
+    bool poster = 2;
+    bool sexy = 3;
+    bool porn = 4;
 }
 
 message ImageResponse {
     string uuid = 1;
     string url = 2;
-    string title = 3;
-    string desc = 4;
-    string type = 5;//NORMAL,SEXY,PORN
-
-    int64 lastUpdated = 6;
-    bool active = 7;
+    string infoUrl = 3;
+    string title = 4;
+    string desc = 5;
+    string type = 6; //NORMAL,SEXY,PORN
+    int64 lastUpdated = 7;
+    bool active = 8;
 }
