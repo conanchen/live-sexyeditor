@@ -23,7 +23,6 @@ public class SexyImageClient {
 
     private final Callback callback;
     private final ManagedChannel channel;
-    private final ImageGrpc.ImageBlockingStub blockingStub;
     private final ImageGrpc.ImageStub asyncStub;
     private StreamObserver<ImageOuterClass.ImageRequest> imageRequestStreamObserver = null;
 
@@ -31,7 +30,6 @@ public class SexyImageClient {
         channel = ManagedChannelBuilder.forAddress(hostname, port)
                 .usePlaintext(true)
                 .build();
-        blockingStub = ImageGrpc.newBlockingStub(channel);
         asyncStub = ImageGrpc.newStub(channel);
         this.callback = callback;
     }
@@ -73,7 +71,6 @@ public class SexyImageClient {
 
 
     public void refreshImages(boolean normal, boolean poster, boolean sexy, boolean porn) {
-        logger.info(String.format("normal=%b,poster=%b,sexy=%b,porn=%b", normal, poster, sexy, porn));
         ImageOuterClass.ImageRequest request = ImageOuterClass.ImageRequest
                 .newBuilder()
                 .setNormal(normal)

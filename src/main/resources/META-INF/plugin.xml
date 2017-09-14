@@ -43,7 +43,7 @@
             <add-to-group group-id="ToolbarFindGroup" anchor="first" />
             <action id="LiveSexyEditor.SexyAction"
                     class="net.intellij.plugins.sexyeditor.action.SexyAction" text="Sexy"
-                    description="Visit Sexy Image Webpage" icon="/net/intellij/plugins/sexyeditor/gfx/girl1.png"/>
+                    description="Visit Sexy Image Webpage" icon="/net/intellij/plugins/sexyeditor/gfx/icon.jpg"/>
         </group>
     </actions>
 
