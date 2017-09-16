@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        GRPC_VERSION = '1.6.1' // CURRENT_GRPC_VERSION
+    }
     repositories {
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -37,19 +40,22 @@ repositories {
 
 
 dependencies {
-    compile('io.grpc:grpc-netty:1.6.1'){
+    compile("io.grpc:grpc-netty:$GRPC_VERSION"){
         force true
     }
-    compile('io.grpc:grpc-protobuf:1.6.1') {
+    compile("io.grpc:grpc-protobuf:$GRPC_VERSION") {
         force true
     }
-    compile('io.grpc:grpc-stub:1.6.1') {
+    compile("io.grpc:grpc-stub:$GRPC_VERSION") {
         force true
     }
     compile('com.google.protobuf:protobuf-java:3.3.1') {
         force true
     }
-    compile('io.grpc:grpc-core:1.6.1') {
+    compile("io.grpc:grpc-core:$GRPC_VERSION") {
+        force true
+    }
+    compile("io.grpc:grpc-services:$GRPC_VERSION") {
         force true
     }
 
@@ -70,7 +76,7 @@ protobuf {
     plugins {
         // Define a plugin with name 'grpc'
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.6.1'
+            artifact = "io.grpc:protoc-gen-grpc-java:$GRPC_VERSION"
         }
     }
 

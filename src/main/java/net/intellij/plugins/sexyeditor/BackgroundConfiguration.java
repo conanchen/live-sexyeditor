@@ -96,7 +96,7 @@ public class BackgroundConfiguration {
     private final static int IMAGE_QUEUE_CAPACITY = 30;
     private final static int IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY = IMAGE_QUEUE_CAPACITY / 5;
     private final static int IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS = 10; //300
-    private EvictingQueue<ImageVo> mFileImageVos = EvictingQueue.create(IMAGE_QUEUE_CAPACITY);
+    private EvictingQueue<Image> mFileImages = EvictingQueue.create(IMAGE_QUEUE_CAPACITY);
 
     // ---------------------------------------------------------------- access
 
@@ -277,7 +277,7 @@ public class BackgroundConfiguration {
      */
     public String getNextImage() {
         int totalFiles = fileNames == null ? 0 : fileNames.length;
-        int totalImageVos = mFileImageVos == null ? 0 : mFileImageVos.size();
+        int totalImageVos = mFileImages == null ? 0 : mFileImages.size();
         if (totalFiles == 0 && totalImageVos == 0) {
             return null;
         }
@@ -296,13 +296,13 @@ public class BackgroundConfiguration {
             action.setInfoUrl(BorderConfig.PROJECT_PAGE);
             return fileNames[imageIndex];
         } else {
-            ImageVo imageVo = mFileImageVos.poll();
-            if (imageVo != null) {
-                if (mFileImageVos.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
-                    mFileImageVos.add(imageVo);
+            Image image = mFileImages.poll();
+            if (image != null) {
+                if (mFileImages.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
+                    mFileImages.add(image);
                 }
-                action.setInfoUrl(imageVo.infoUrl);
-                return imageVo.url;
+                action.setInfoUrl(image.infoUrl);
+                return image.url;
             }
         }
         return null;
@@ -391,8 +391,8 @@ public class BackgroundConfiguration {
 
     SexyImageClient.Callback callback = new SexyImageClient.Callback() {
         @Override
-        public void onImagemetaReceived(ImageVo imageVo) {
-            mFileImageVos.add(imageVo);
+        public void onImagemetaReceived(Image image) {
+            mFileImages.add(image);
         }
     };
 
@@ -401,15 +401,14 @@ public class BackgroundConfiguration {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
             //using grpc to download images metadata
-            SexyImageClient client = new SexyImageClient(imageServerHost, imageServerPort, callback);
+            SexyImageClient sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort, callback);
             Observable
                     .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                    .takeWhile(aLong -> imageServerConnected
-                            && mFileImageVos.remainingCapacity() > 0)
+                    .takeWhile(aLong -> imageServerConnected)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(Schedulers.io())
                     .subscribe(aLong -> {
-                                client.refreshImages(downloadNormalImage,
+                                sexyImageClient.refreshImages(downloadNormalImage,
                                         downloadPosterImage,
                                         downloadSexyImage,
                                         downloadPornImage);

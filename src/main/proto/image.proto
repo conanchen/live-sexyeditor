@@ -25,15 +25,12 @@ service Image {
     // streamed rather than returned at once (e.g. in a response message with a
     // repeated field), as the lastUpdated maybe an very old time and contain a
     // huge number of images.
-    rpc ListMessages (stream ImageRequest) returns (stream ImageResponse) {
+    rpc ListToprankImages (stream ToprankImageRequest) returns (stream ImageResponse) {
     }
 }
 
-message ImageRequest {
-    bool normal = 1;
-    bool poster = 2;
-    bool sexy = 3;
-    bool porn = 4;
+message ToprankImageRequest {
+    repeated ImageType types = 1;
 }
 
 message ImageResponse {
@@ -42,7 +39,14 @@ message ImageResponse {
     string infoUrl = 3;
     string title = 4;
     string desc = 5;
-    string type = 6; //NORMAL,SEXY,PORN
+    ImageType type = 6;
     int64 lastUpdated = 7;
     bool active = 8;
+}
+
+enum ImageType {
+    NORMAL = 0;
+    POSTER = 1;
+    SEXY = 2;
+    PORN = 3;
 }

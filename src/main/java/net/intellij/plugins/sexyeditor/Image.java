@@ -1,21 +1,24 @@
 package net.intellij.plugins.sexyeditor;
 
 import com.google.common.base.Strings;
+import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+
+import java.util.Objects;
 
 
-public class ImageVo {
+public class Image {
     public String uuid;
     public String url;
     public String infoUrl;
     public String title;
     public String desc;
-    public String type;//NORMAL,POSTER,SEXY,PORN
+    public ImageOuterClass.ImageType type;//NORMAL,POSTER,SEXY,PORN
 
 
-    public ImageVo() {
+    public Image() {
     }
 
-    public ImageVo(String uuid, String url, String infoUrl, String title, String desc, String type) {
+    public Image(String uuid, String url, String infoUrl, String title, String desc, ImageOuterClass.ImageType type) {
         this.uuid = uuid;
         this.url = url;
         this.infoUrl = infoUrl;
@@ -34,12 +37,12 @@ public class ImageVo {
         private String infoUrl;
         private String title;
         private String desc;
-        private String type;//NORMAL,SEXY,PORN
+        private ImageOuterClass.ImageType type;//NORMAL,SEXY,PORN
 
         Builder() {
         }
 
-        public ImageVo build() {
+        public Image build() {
             String missing = "";
             if (Strings.isNullOrEmpty(uuid)) {
                 missing += " uuid";
@@ -47,15 +50,15 @@ public class ImageVo {
             if (Strings.isNullOrEmpty(url)) {
                 missing += " url";
             }
-            if (Strings.isNullOrEmpty(type)) {
+            if (Objects.isNull(type)) {
                 missing += " type";
             }
 
             if (!missing.isEmpty()) {
                 throw new IllegalStateException("Missing required properties:" + missing);
             }
-            ImageVo imageVo = new ImageVo(uuid, url, infoUrl, title, desc, type);
-            return imageVo;
+            Image image = new Image(uuid, url, infoUrl, title, desc, type);
+            return image;
         }
 
         public Builder setUuid(String uuid) {
@@ -83,7 +86,7 @@ public class ImageVo {
             return this;
         }
 
-        public Builder setType(String type) {
+        public Builder setType(ImageOuterClass.ImageType type) {
             this.type = type;
             return this;
         }

@@ -15,61 +15,61 @@ import java.util.Random;
  */
 public class SexyEditor implements ApplicationComponent {
 
-	public static final String COMPONENT_NAME = "LiveSexyEditor";
-	private static Random rnd = new Random();
-	private Icon[] pluginIcons;
+    public static final String COMPONENT_NAME = "LiveSexyEditor";
+    private static Random rnd = new Random();
+    private Icon[] pluginIcons;
 
-	public SexyEditor() {
-	}
+    public SexyEditor() {
+    }
 
-	public static SexyEditor getInstance() {
-		return ApplicationManager.getApplication().getComponent(SexyEditor.class);
-	}
+    public static SexyEditor getInstance() {
+        return ApplicationManager.getApplication().getComponent(SexyEditor.class);
+    }
 
-	private SexyEditorListener editorListener;
+    private SexyEditorListener editorListener;
 
-	/**
-	 * Registers new editor factory listener.
-	 */
-	public void initComponent() {
-		SexyEditorState state = SexyEditorState.getInstance();
+    /**
+     * Registers new editor factory listener.
+     */
+    public void initComponent() {
+        SexyEditorState state = SexyEditorState.getInstance();
 
-		if (state.configs.isEmpty()) {
-			state.configs.add(new BackgroundConfiguration());
-		}
-		editorListener = new SexyEditorListener(state);
-		EditorFactory.getInstance().addEditorFactoryListener(editorListener, () -> editorListener = null);
+        if (state.configs.isEmpty()) {
+            state.configs.add(new BackgroundConfiguration());
+        }
+        editorListener = new SexyEditorListener(state);
+        EditorFactory.getInstance().addEditorFactoryListener(editorListener, () -> editorListener = null);
 
-	}
+    }
 
-	/**
-	 * Removes editor listener.
-	 */
-	public void disposeComponent() {
+    /**
+     * Removes editor listener.
+     */
+    public void disposeComponent() {
 //		EditorFactory.getInstance().removeEditorFactoryListener(editorListener);
-		editorListener = null;
-	}
+        editorListener = null;
+    }
 
-	/**
-	 * Returns component name.
-	 */
-	@NotNull
-	public String getComponentName() {
-		return COMPONENT_NAME;
-	}
+    /**
+     * Returns component name.
+     */
+    @NotNull
+    public String getComponentName() {
+        return COMPONENT_NAME;
+    }
 
-	/**
-	 * Returns random 32x32 icon representing the plugin.
-	 */
-	@Nullable
-	public Icon getIcon() {
-		if (pluginIcons == null) {
-			pluginIcons = new Icon[5];
-			for (int i = 0; i < pluginIcons.length; i++) {
-				pluginIcons[i] = IconLoader.getIcon("/net/intellij/plugins/sexyeditor/gfx/girl" + (i + 1) +".png");
-			}
-		}
-		return pluginIcons[rnd.nextInt(pluginIcons.length)];
-	}
+    /**
+     * Returns random 32x32 icon representing the plugin.
+     */
+    @Nullable
+    public Icon getIcon() {
+        if (pluginIcons == null) {
+            pluginIcons = new Icon[5];
+            for (int i = 0; i < pluginIcons.length; i++) {
+                pluginIcons[i] = IconLoader.getIcon("/net/intellij/plugins/sexyeditor/gfx/girl" + (i + 1) + ".png");
+            }
+        }
+        return pluginIcons[rnd.nextInt(pluginIcons.length)];
+    }
 
 }

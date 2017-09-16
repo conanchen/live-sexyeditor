@@ -3,6 +3,7 @@ package net.intellij.plugins.sexyeditor;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import net.intellij.plugins.sexyeditor.grpc.HelloWorldClient;
+import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -122,11 +123,18 @@ public class BorderConfig {
         imageServerPortTextField.addKeyListener(new ImageServerConnectedListener());
         testImageServerButton.addActionListener(e -> {
             String hostport = imageServerHostTextField.getText() + ":" + imageServerPortTextField.getText();
-            HelloWorldClient helloWorldClient = new HelloWorldClient(imageServerHostTextField.getText(), Integer.valueOf(imageServerPortTextField.getText()));
-            String helloMessage = helloWorldClient.greet("Connect");
-            if (helloMessage != null && helloMessage.indexOf("Connect") > 0) {
+            SexyImageClient sexyImageClient = new SexyImageClient(
+                    imageServerHostTextField.getText(),
+                    Integer.valueOf(imageServerPortTextField.getText()),
+                    imageMeta -> {
+                    }
+            );
+            if (sexyImageClient.isHealth()) {
                 config.setImageServerConnected(true);
-                JOptionPane.showMessageDialog(new JFrame(), "Image server (" + hostport + ") connected sucessfully.\n Eggs are not supposed to be green.");
+                config.setImageServerHost(imageServerHostTextField.getText());
+                config.setImageServerPort(Integer.valueOf(imageServerPortTextField.getText()));
+                JOptionPane.showMessageDialog(new JFrame(), "Image server (" + hostport + ") connected sucessfully.\n" +
+                        "Eggs are not supposed to be green.");
                 config.startDownloadImageMetaRefreshIntervalThread();
             } else {
                 config.setImageServerConnected(false);

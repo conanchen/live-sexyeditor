@@ -3,6 +3,9 @@ package net.intellij.plugins.sexyeditor.grpc;
 import com.google.gson.Gson;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.health.v1.HealthCheckRequest;
+import io.grpc.health.v1.HealthCheckResponse;
+import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
 import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
 import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
@@ -30,6 +33,14 @@ public class SexyTestServer {
         server = ServerBuilder.forPort(port)
                 .addService(new GreeterImpl())
                 .addService(new ImageImpl())
+                .addService(new HealthGrpc.HealthImplBase() {
+                    @Override
+                    public void check(HealthCheckRequest request, StreamObserver<HealthCheckResponse> responseObserver) {
+                        logger.info(String.format("check by HealthCheckRequest=[%s]",gson.toJson(request)));
+                       responseObserver.onNext(HealthCheckResponse.newBuilder().setStatus(HealthCheckResponse.ServingStatus.SERVING).build());
+                       responseObserver.onCompleted();
+                    }
+                })
                 .build()
                 .start();
 
@@ -82,56 +93,57 @@ public class SexyTestServer {
 
     private class ImageImpl extends ImageGrpc.ImageImplBase {
         @Override
-        public StreamObserver<ImageOuterClass.ImageRequest> listMessages(StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
-            return new StreamObserver<ImageOuterClass.ImageRequest>() {
+        public StreamObserver<ImageOuterClass.ToprankImageRequest> listToprankImages(StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
+            return new StreamObserver<ImageOuterClass.ToprankImageRequest>() {
 
                 @Override
-                public void onNext(ImageOuterClass.ImageRequest value) {
-                    logger.info(String.format("\nonNext --------------------------normal=%b,poster=%b,sexy=%b,porn=%b",value.getNormal(),value.getPoster(),value.getSexy(),value.getPorn()));
+                public void onNext(ImageOuterClass.ToprankImageRequest toprankImageRequest) {
+                    logger.info(String.format("\nonNext --------------------------toprankImageRequest.getTypesList())=[%s]"
+                            ,gson.toJson(toprankImageRequest.getTypesList())));
 
-                    if (value.getNormal()) {
+                    if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.NORMAL)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
                                 .setUuid(UUID.randomUUID().toString())
                                 .setUrl("http://n.7k7kimg.cn/2013/0316/1363403616970.jpg")
                                 .setInfoUrl("http://www.baidu.com")
-                                .setType("NORMAL")
+                                .setType(ImageOuterClass.ImageType.NORMAL)
                                 .build();
                         responseObserver.onNext(response);
                         logger.info(String.format("onNext url=[%s]", response.getUrl()));
                     }
 
-                    if (value.getPoster()) {
+                    if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.POSTER)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
                                 .setUuid(UUID.randomUUID().toString())
                                 .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
                                 .setInfoUrl("http://www.qq.com")
-                                .setType("POSTER")
+                                .setType(ImageOuterClass.ImageType.POSTER)
                                 .build();
                         responseObserver.onNext(response);
                         logger.info(String.format("onNext url=[%s]", response.getUrl()));
                     }
 
-                    if (value.getSexy()) {
+                    if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.SEXY)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
                                 .setUuid(UUID.randomUUID().toString())
                                 .setUrl("http://n.7k7kimg.cn/2013/0316/1363403583271.jpg")
                                 .setInfoUrl("http://www.sohu.com")
-                                .setType("SEXY")
+                                .setType(ImageOuterClass.ImageType.SEXY)
                                 .build();
                         responseObserver.onNext(response);
                         logger.info(String.format("onNext url=[%s]", response.getUrl()));
                     }
 
-                    if (value.getPorn()) {
+                    if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.PORN)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
                                 .setUuid(UUID.randomUUID().toString())
                                 .setUrl("http://www.zjol.com.cn/pic/0/01/35/25/1352581_955017.jpg")
                                 .setInfoUrl("http://www.163.com")
-                                .setType("PORN")
+                                .setType(ImageOuterClass.ImageType.PORN)
                                 .build();
                         responseObserver.onNext(response);
                         logger.info(String.format("onNext url=[%s]", response.getUrl()));
