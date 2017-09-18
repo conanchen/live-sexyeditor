@@ -41,33 +41,32 @@ public class SexyImageClient {
     }
 
     private StreamObserver<ImageOuterClass.ToprankImageRequest> getImageRequestStreamObserver() {
-        if(imageRequestStreamObserver == null) {
+        if (imageRequestStreamObserver == null) {
             imageRequestStreamObserver =
                     asyncStub.withWaitForReady().listToprankImages(
                             new StreamObserver<ImageOuterClass.ImageResponse>() {
-                        @Override
-                        public void onNext(ImageOuterClass.ImageResponse response) {
-                          Image image =  Image
-                                    .builder()
-                                    .setUuid(response.getUuid())
-                                    .setType(response.getType())
-                                    .setUrl(response.getUrl())
-                                    .setInfoUrl(response.getInfoUrl())
-                                    .build();
-                            callback.onImagemetaReceived(image);
-                        }
+                                @Override
+                                public void onNext(ImageOuterClass.ImageResponse response) {
+                                    Image image = Image
+                                            .builder()
+                                            .setUrl(response.getUrl())
+                                            .setInfoUrl(response.getInfoUrl())
+                                            .setType(response.getType())
+                                            .build();
+                                    callback.onImagemetaReceived(image);
+                                }
 
-                        @Override
-                        public void onError(Throwable t) {
-                            logger.severe(t.getMessage());
-                            imageRequestStreamObserver = null;
-                        }
+                                @Override
+                                public void onError(Throwable t) {
+                                    logger.severe(t.getMessage());
+                                    imageRequestStreamObserver = null;
+                                }
 
-                        @Override
-                        public void onCompleted() {
-                            logger.info("Completed");
-                        }
-                    });
+                                @Override
+                                public void onCompleted() {
+                                    logger.info("Completed");
+                                }
+                            });
         }
         return imageRequestStreamObserver;
     }
@@ -78,22 +77,43 @@ public class SexyImageClient {
 
 
     public void refreshImages(boolean normal, boolean poster, boolean sexy, boolean porn) {
-        List<ImageOuterClass.ImageType> typeList = new ArrayList<ImageOuterClass.ImageType>(){{
-            if(normal)this.add(ImageOuterClass.ImageType.NORMAL);
-            if(poster)this.add(ImageOuterClass.ImageType.POSTER);
-            if(sexy)this.add(ImageOuterClass.ImageType.SEXY);
-            if(porn)this.add(ImageOuterClass.ImageType.PORN);
+        List<ImageOuterClass.ImageType> typeList = new ArrayList<ImageOuterClass.ImageType>() {{
+            if (normal) this.add(ImageOuterClass.ImageType.NORMAL);
+            if (poster) this.add(ImageOuterClass.ImageType.POSTER);
+            if (sexy) this.add(ImageOuterClass.ImageType.SEXY);
+            if (porn) this.add(ImageOuterClass.ImageType.PORN);
         }};
-        ImageOuterClass.ToprankImageRequest request = ImageOuterClass.ToprankImageRequest
-                .newBuilder()
-                .addAllTypes(typeList)
-                .build();
+        if (typeList.size() > 0) {
+            ImageOuterClass.ToprankImageRequest request = ImageOuterClass.ToprankImageRequest
+                    .newBuilder()
+                    .addAllTypes(typeList)
+                    .build();
 
-        getImageRequestStreamObserver().onNext(request);
-
+            getImageRequestStreamObserver().onNext(request);
+        }
     }
 
-    public boolean isHealth(){
+    public void visit(String imageUrl) {
+        ImageOuterClass.VisitRequest visitRequest = ImageOuterClass.VisitRequest.newBuilder().setUrl(imageUrl).build();
+        asyncStub.visit(visitRequest, new StreamObserver<ImageOuterClass.VisitResponse>() {
+            @Override
+            public void onNext(ImageOuterClass.VisitResponse value) {
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
+    }
+
+    public boolean isHealth() {
         final HealthCheckRequest healthCheckRequest = HealthCheckRequest.newBuilder().setService(ImageGrpc.getServiceDescriptor().getName()).build();
         final HealthGrpc.HealthFutureStub healthFutureStub = HealthGrpc.newFutureStub(channel);
         final HealthCheckResponse.ServingStatus servingStatus;
@@ -116,9 +136,10 @@ public class SexyImageClient {
                 logger.info(String.format("onImagemetaReceived imageVo=[%s]", gson.toJson(imageVo)));
             }
         };
-        SexyImageClient client = new SexyImageClient("localhost", 42420, callback);
+//        SexyImageClient client = new SexyImageClient("localhost", 42420, callback);
+        SexyImageClient client = new SexyImageClient("localhost", 8980, callback);
 
-        if(client.isHealth()) {
+        if (client.isHealth()) {
             client.refreshImages(true, false, false, false);
             Thread.sleep(3000);
             client.refreshImages(true, true, false, false);

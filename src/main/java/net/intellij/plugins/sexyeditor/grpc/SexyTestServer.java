@@ -104,7 +104,6 @@ public class SexyTestServer {
                     if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.NORMAL)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
-                                .setUuid(UUID.randomUUID().toString())
                                 .setUrl("http://n.7k7kimg.cn/2013/0316/1363403616970.jpg")
                                 .setInfoUrl("http://www.baidu.com")
                                 .setType(ImageOuterClass.ImageType.NORMAL)
@@ -116,7 +115,6 @@ public class SexyTestServer {
                     if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.POSTER)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
-                                .setUuid(UUID.randomUUID().toString())
                                 .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
                                 .setInfoUrl("http://www.qq.com")
                                 .setType(ImageOuterClass.ImageType.POSTER)
@@ -128,7 +126,6 @@ public class SexyTestServer {
                     if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.SEXY)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
-                                .setUuid(UUID.randomUUID().toString())
                                 .setUrl("http://n.7k7kimg.cn/2013/0316/1363403583271.jpg")
                                 .setInfoUrl("http://www.sohu.com")
                                 .setType(ImageOuterClass.ImageType.SEXY)
@@ -140,7 +137,6 @@ public class SexyTestServer {
                     if (toprankImageRequest.getTypesList().contains(ImageOuterClass.ImageType.PORN)) {
                         ImageOuterClass.ImageResponse response = ImageOuterClass.ImageResponse
                                 .newBuilder()
-                                .setUuid(UUID.randomUUID().toString())
                                 .setUrl("http://www.zjol.com.cn/pic/0/01/35/25/1352581_955017.jpg")
                                 .setInfoUrl("http://www.163.com")
                                 .setType(ImageOuterClass.ImageType.PORN)

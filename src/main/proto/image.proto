@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 syntax = "proto3";
-
+import "common.proto";
 option java_package = "net.intellij.plugins.sexyeditor.image";
 
 // The image service definition.
@@ -27,21 +27,43 @@ service Image {
     // huge number of images.
     rpc ListToprankImages (stream ToprankImageRequest) returns (stream ImageResponse) {
     }
+
+    rpc Visit (VisitRequest) returns (VisitResponse) {}
+
+    rpc FindImage (FindImageRequest) returns (FindImageResponse) {
+    }
 }
 
 message ToprankImageRequest {
     repeated ImageType types = 1;
 }
 
-message ImageResponse {
+
+message VisitRequest {
+    string url = 1;
+}
+
+message VisitResponse {
+    Error error = 1;
+}
+
+message FindImageRequest {
     string uuid = 1;
-    string url = 2;
-    string infoUrl = 3;
-    string title = 4;
-    string desc = 5;
-    ImageType type = 6;
-    int64 lastUpdated = 7;
-    bool active = 8;
+}
+
+message ImageResponse {
+    string url = 1;
+    string infoUrl = 2;
+    string title = 3;
+    string desc = 4;
+    ImageType type = 5;
+    int64 lastUpdated = 6;
+    bool active = 7;
+}
+
+message FindImageResponse {
+    Error error = 1;
+    ImageResponse imageResponse = 2;
 }
 
 enum ImageType {

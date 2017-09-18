@@ -97,7 +97,7 @@ public class BackgroundConfiguration {
     private final static int IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY = IMAGE_QUEUE_CAPACITY / 5;
     private final static int IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS = 10; //300
     private EvictingQueue<Image> mFileImages = EvictingQueue.create(IMAGE_QUEUE_CAPACITY);
-
+    private SexyImageClient sexyImageClient = null;
     // ---------------------------------------------------------------- access
 
     public String getName() {
@@ -293,7 +293,7 @@ public class BackgroundConfiguration {
         ActionManager am = ActionManager.getInstance();
         SexyAction action = (SexyAction) am.getAction("LiveSexyEditor.SexyAction");
         if (imageIndex < totalFiles) {
-            action.setInfoUrl(BorderConfig.PROJECT_PAGE);
+            action.setSexyImageClient(sexyImageClient).setUrl(fileNames[imageIndex]).setInfoUrl(BorderConfig.PROJECT_PAGE);
             return fileNames[imageIndex];
         } else {
             Image image = mFileImages.poll();
@@ -301,7 +301,7 @@ public class BackgroundConfiguration {
                 if (mFileImages.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
                     mFileImages.add(image);
                 }
-                action.setInfoUrl(image.infoUrl);
+                action.setSexyImageClient(sexyImageClient).setUrl(image.url).setInfoUrl(image.infoUrl);
                 return image.url;
             }
         }
@@ -401,7 +401,7 @@ public class BackgroundConfiguration {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
             //using grpc to download images metadata
-            SexyImageClient sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort, callback);
+            sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort, callback);
             Observable
                     .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
                     .takeWhile(aLong -> imageServerConnected)

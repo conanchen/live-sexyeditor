@@ -7,7 +7,6 @@ import java.util.Objects;
 
 
 public class Image {
-    public String uuid;
     public String url;
     public String infoUrl;
     public String title;
@@ -18,8 +17,7 @@ public class Image {
     public Image() {
     }
 
-    public Image(String uuid, String url, String infoUrl, String title, String desc, ImageOuterClass.ImageType type) {
-        this.uuid = uuid;
+    public Image( String url, String infoUrl, String title, String desc, ImageOuterClass.ImageType type) {
         this.url = url;
         this.infoUrl = infoUrl;
         this.title = title;
@@ -32,7 +30,6 @@ public class Image {
     }
 
     public static final class Builder {
-        private String uuid;
         private String url;
         private String infoUrl;
         private String title;
@@ -44,9 +41,6 @@ public class Image {
 
         public Image build() {
             String missing = "";
-            if (Strings.isNullOrEmpty(uuid)) {
-                missing += " uuid";
-            }
             if (Strings.isNullOrEmpty(url)) {
                 missing += " url";
             }
@@ -57,15 +51,9 @@ public class Image {
             if (!missing.isEmpty()) {
                 throw new IllegalStateException("Missing required properties:" + missing);
             }
-            Image image = new Image(uuid, url, infoUrl, title, desc, type);
+            Image image = new Image( url, infoUrl, title, desc, type);
             return image;
         }
-
-        public Builder setUuid(String uuid) {
-            this.uuid = uuid;
-            return this;
-        }
-
         public Builder setUrl(String url) {
             this.url = url;
             return this;
