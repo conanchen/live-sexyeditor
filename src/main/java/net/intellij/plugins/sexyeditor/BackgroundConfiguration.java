@@ -293,7 +293,7 @@ public class BackgroundConfiguration {
         ActionManager am = ActionManager.getInstance();
         SexyAction action = (SexyAction) am.getAction("LiveSexyEditor.SexyAction");
         if (imageIndex < totalFiles) {
-            action.setSexyImageClient(sexyImageClient).setUrl(fileNames[imageIndex]).setInfoUrl(BorderConfig.PROJECT_PAGE);
+            action.setSexyImageClient(sexyImageClient).setUrl(fileNames[imageIndex]).setInfoUrl(fileNames[imageIndex]);
             return fileNames[imageIndex];
         } else {
             Image image = mFileImages.poll();
@@ -301,7 +301,10 @@ public class BackgroundConfiguration {
                 if (mFileImages.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
                     mFileImages.add(image);
                 }
-                action.setSexyImageClient(sexyImageClient).setUrl(image.url).setInfoUrl(image.infoUrl);
+                String inforUrl1 = Strings.isNullOrEmpty(image.infoUrl)?image.url:image.infoUrl;
+                action.setSexyImageClient(sexyImageClient)
+                        .setUrl(image.url)
+                        .setInfoUrl(inforUrl1);
                 return image.url;
             }
         }
