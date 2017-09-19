@@ -48,6 +48,7 @@ public class BorderConfig {
     private JCheckBox downloadPosterCheckBox;
     private JCheckBox downloadSexyCheckBox;
     private JCheckBox downloadPornCheckBox;
+    private JTextPane httpOrLocalImagesTextPane;
 
 
     private DefaultComboBoxModel positionComboBoxModel;
@@ -217,7 +218,7 @@ public class BorderConfig {
         fileListTextArea.setColumns(35);
         fileListTextArea.setRows(10);
         fileListTextArea.setText("");
-        fileListTextArea.setToolTipText("<html>\nFile list of images.");
+        fileListTextArea.setToolTipText("<html>\nFile list of images.\ne.g.<br> https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png\n<br>\n/Users/admin/image.png");
         scrollPane1.setViewportView(fileListTextArea);
         final JLabel label6 = new JLabel();
         label6.setText("Offset:");

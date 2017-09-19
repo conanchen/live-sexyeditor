@@ -98,7 +98,7 @@ public class SexyImageClient {
         asyncStub.visit(visitRequest, new StreamObserver<ImageOuterClass.VisitResponse>() {
             @Override
             public void onNext(ImageOuterClass.VisitResponse value) {
-
+                logger.info(String.format("imageUrl=%s, VisitResponse=%s", imageUrl, gson.toJson(value)));
             }
 
             @Override
@@ -149,9 +149,10 @@ public class SexyImageClient {
             client.refreshImages(true, true, true, true);
 
             for (int i = 0; i > -1; i++) {
-                logger.info(String.format("\n%d testing reconnect....=============================", i));
-                client.refreshImages(true, false, false, false);
-                Thread.sleep(5000);
+//                logger.info(String.format("\n%d testing reconnect....=============================", i));
+//                client.refreshImages(true, false, false, false);
+                client.visit(String.format("%s?%d", "http://images6.fanpop.com/image/photos/36800000/Game-of-Thrones-Season-4-game-of-thrones-36858892-2832-4256.jpg", i));
+                Thread.sleep(1000);
             }
         }
         // Receiving happens asynchronously

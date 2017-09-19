@@ -301,7 +301,7 @@ public class BackgroundConfiguration {
                 if (mFileImages.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
                     mFileImages.add(image);
                 }
-                String inforUrl1 = Strings.isNullOrEmpty(image.infoUrl)?image.url:image.infoUrl;
+                String inforUrl1 = Strings.isNullOrEmpty(image.infoUrl) ? image.url : image.infoUrl;
                 action.setSexyImageClient(sexyImageClient)
                         .setUrl(image.url)
                         .setInfoUrl(inforUrl1);
