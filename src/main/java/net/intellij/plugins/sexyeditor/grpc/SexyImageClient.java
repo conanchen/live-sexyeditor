@@ -84,12 +84,12 @@ public class SexyImageClient {
         List<ImageOuterClass.ImageType> typeList = getImageTypes(normal, poster, sexy, porn);
         if (typeList.size() > 0) {
             logger.info(String.format("subscribeToprankImages normal=%b,poster=%b,sexy=%b,porn=%b", normal, poster, sexy, porn));
-            ImageOuterClass.ToprankImageRequest request = ImageOuterClass.ToprankImageRequest
+            ImageOuterClass.ImageRequest request = ImageOuterClass.ImageRequest
                     .newBuilder()
                     .addAllTypes(typeList)
                     .build();
             subscribingToprankImages.set(true);
-            asyncStub.withWaitForReady().subscribeToprankImages(request, new ToprankImagesStreamObserver(callback));
+            asyncStub.withWaitForReady().subscribeImages(request, new ToprankImagesStreamObserver(callback));
         }
     }
 
@@ -138,28 +138,28 @@ public class SexyImageClient {
         return false;
     }
 
+    private static int port = 8980;
     public static void main(String[] args) throws Exception {
         final CountDownLatch finishLatch = new CountDownLatch(1);
         AtomicInteger msgCount = new AtomicInteger(0);
 
-        SexyImageClient.Callback callback = (Image imageVo) -> logger.info(
-                String.format("Callback.onImagemetaReceived i=%d imageVo=[%s]",
+        SexyImageClient.Callback subscribeCallback = (Image imageVo) -> logger.info(
+                String.format("subscribeCallback.onImagemetaReceived i=%d imageVo=[%s]",
                         msgCount.addAndGet(1), gson.toJson(imageVo))
         );
 
 
-        SexyImageClient client = new SexyImageClient("localhost", 8980);
+        SexyImageClient client = new SexyImageClient("localhost", port);
 
         if (client.isHealth()) {
 
-            client.subscribeToprankImages(true, false, false, false, callback);
+            client.subscribeToprankImages(true, false, false, false, subscribeCallback);
             for (int i = 0; i > -1; i++) {
-//                logger.info(String.format("\n%d testing reconnect....=============================", i));
                 client.visit(String.format("%s?%d", "http://images6.fanpop.com/image/photos/36800000/Game-of-Thrones-Season-4-game-of-thrones-36858892-2832-4256.jpg", i));
                 Thread.sleep(30000);
 
                 if (!client.isSubscribingToprankImages()) {
-                    client.subscribeToprankImages(true, false, false, false, callback);
+                    client.subscribeToprankImages(true, false, false, false, subscribeCallback);
                 }
             }
         }

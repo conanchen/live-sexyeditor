@@ -25,17 +25,14 @@ service Image {
     // streamed rather than returned at once (e.g. in a response message with a
     // repeated field), as the lastUpdated maybe an very old time and contain a
     // huge number of images.
-    rpc SubscribeToprankImages (ToprankImageRequest) returns (stream ImageResponse) {
+    rpc SubscribeImages (ImageRequest) returns (stream ImageResponse) {
     }
 
     rpc Visit (VisitRequest) returns (VisitResponse) {
     }
-
-    rpc FindImage (FindImageRequest) returns (FindImageResponse) {
-    }
 }
 
-message ToprankImageRequest {
+message ImageRequest {
     repeated ImageType types = 1;
 }
 
@@ -46,10 +43,6 @@ message VisitRequest {
 
 message VisitResponse {
     Error error = 1;
-}
-
-message FindImageRequest {
-    string uuid = 1;
 }
 
 message ImageResponse {

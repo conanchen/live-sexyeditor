@@ -7,16 +7,17 @@ import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
+import io.reactivex.Observable;
+import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
 import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import org.ditto.sexyimage.grpc.Common;
 
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class SexyTestServer {
@@ -92,5 +93,35 @@ public class SexyTestServer {
     }
 
     private class ImageImpl extends ImageGrpc.ImageImplBase {
+        @Override
+        public void subscribeImages(ImageOuterClass.ImageRequest request, StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
+
+            List<Image> images = new ArrayList<Image>() {{
+                add(Image
+                        .builder()
+                        .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
+                        .setInfoUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
+                        .setType(ImageOuterClass.ImageType.NORMAL)
+                        .build());
+            }};
+
+            Observable.interval(3, TimeUnit.SECONDS).subscribe(aLong -> {
+                for (Image im:images) {
+                    responseObserver.onNext(ImageOuterClass.ImageResponse.newBuilder()
+                            .setUrl(im.url)
+                            .setInfoUrl(im.infoUrl)
+                            .setType(im.type)
+                            .setLastUpdated(System.currentTimeMillis())
+                            .build());
+                }
+            });
+        }
+
+        @Override
+        public void visit(ImageOuterClass.VisitRequest request, StreamObserver<ImageOuterClass.VisitResponse> responseObserver) {
+            logger.info(String.format("VisitRequest.url=[%s]",request.getUrl()));
+            responseObserver.onNext(ImageOuterClass.VisitResponse.newBuilder().setError(Common.Error.newBuilder().setCode("IMAGE.VISIT.OK").build()).build());
+            responseObserver.onCompleted();
+        }
     }
 }
