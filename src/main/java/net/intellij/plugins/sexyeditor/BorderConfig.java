@@ -126,9 +126,7 @@ public class BorderConfig {
             String hostport = imageServerHostTextField.getText() + ":" + imageServerPortTextField.getText();
             SexyImageClient sexyImageClient = new SexyImageClient(
                     imageServerHostTextField.getText(),
-                    Integer.valueOf(imageServerPortTextField.getText()),
-                    imageMeta -> {
-                    }
+                    Integer.valueOf(imageServerPortTextField.getText())
             );
             if (sexyImageClient.isHealth()) {
                 config.setImageServerConnected(true);
@@ -160,7 +158,7 @@ public class BorderConfig {
      */
     private void $$$setupUI$$$() {
         borderConfigPanel = new JPanel();
-        borderConfigPanel.setLayout(new GridLayoutManager(12, 7, new Insets(10, 10, 10, 10), -1, -1));
+        borderConfigPanel.setLayout(new GridLayoutManager(13, 7, new Insets(10, 10, 10, 10), -1, -1));
         borderConfigPanel.setBorder(BorderFactory.createTitledBorder("Editor group configuration"));
         final JLabel label1 = new JLabel();
         label1.setText("Name:");
@@ -213,7 +211,7 @@ public class BorderConfig {
         matchTextField.setToolTipText("<html>\nList of <b>wildcard</b> expressions separated by semicolon (<b>;</b>) for matching editor file names.<br>\nFile belongs to the first group that it matches.<br>\n<i>Example</i>: *.java;*.jsp");
         borderConfigPanel.add(matchTextField, new GridConstraints(1, 1, 1, 4, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(120, 20), null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
-        borderConfigPanel.add(scrollPane1, new GridConstraints(7, 1, 5, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        borderConfigPanel.add(scrollPane1, new GridConstraints(7, 1, 6, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         fileListTextArea = new JTextArea();
         fileListTextArea.setColumns(35);
         fileListTextArea.setRows(10);
@@ -236,10 +234,6 @@ public class BorderConfig {
         hintsLabel.setVerticalAlignment(0);
         hintsLabel.setVerticalTextPosition(0);
         borderConfigPanel.add(hintsLabel, new GridConstraints(0, 5, 3, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
-        insertFilesButton = new JButton();
-        insertFilesButton.setIcon(new ImageIcon(getClass().getResource("/net/intellij/plugins/sexyeditor/gfx/images.png")));
-        insertFilesButton.setText("Insert...");
-        borderConfigPanel.add(insertFilesButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, 25), null, 0, false));
         serverPanel = new JPanel();
         serverPanel.setLayout(new GridLayoutManager(3, 7, new Insets(0, 0, 0, 0), -1, -1));
         borderConfigPanel.add(serverPanel, new GridConstraints(3, 5, 4, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -256,7 +250,7 @@ public class BorderConfig {
         testImageServerButton.setText("Test Image Server");
         serverPanel.add(testImageServerButton, new GridConstraints(1, 2, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
-        label8.setText("Download Category:");
+        label8.setText("Image Show:");
         serverPanel.add(label8, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         downloadNormalCheckBox = new JCheckBox();
         downloadNormalCheckBox.setSelected(true);
@@ -280,6 +274,15 @@ public class BorderConfig {
         slideShowPause.setEnabled(false);
         slideShowPause.setToolTipText("<html>\nTime between changing the image<br>\nin slideshow mode (in seconds).");
         borderConfigPanel.add(slideShowPause, new GridConstraints(6, 1, 1, 2, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 20), null, 0, false));
+        httpOrLocalImagesTextPane = new JTextPane();
+        httpOrLocalImagesTextPane.setEditable(false);
+        httpOrLocalImagesTextPane.setEnabled(false);
+        httpOrLocalImagesTextPane.setText("Http or Local Images");
+        borderConfigPanel.add(httpOrLocalImagesTextPane, new GridConstraints(9, 0, 3, 1, GridConstraints.ANCHOR_NORTHEAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(80, 50), null, 0, false));
+        insertFilesButton = new JButton();
+        insertFilesButton.setIcon(new ImageIcon(getClass().getResource("/net/intellij/plugins/sexyeditor/gfx/images.png")));
+        insertFilesButton.setText("Insert...");
+        borderConfigPanel.add(insertFilesButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, 25), null, 0, false));
         label1.setLabelFor(nameTextField);
         label3.setLabelFor(positionComboBox);
         label4.setLabelFor(fileListTextArea);

@@ -392,38 +392,33 @@ public class BackgroundConfiguration {
         slideshowThread = null;
     }
 
-    SexyImageClient.Callback callback = new SexyImageClient.Callback() {
-        @Override
-        public void onImagemetaReceived(Image image) {
-            mFileImages.add(image);
-        }
-    };
+
+
+    Observable<Long> subscribeToprankImagesTimer = Observable
+            .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(Schedulers.io());
 
     public void startDownloadImageMetaRefreshIntervalThread() {
         if (!Strings.isNullOrEmpty(imageServerHost)) {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
-            //using grpc to download images metadata
-            sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort, callback);
-            Observable
-                    .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                    .takeWhile(aLong -> imageServerConnected)
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(Schedulers.io())
-                    .subscribe(aLong -> {
-                                sexyImageClient.refreshImages(downloadNormalImage,
-                                        downloadPosterImage,
-                                        downloadSexyImage,
-                                        downloadPornImage);
-                            },
-                            throwable -> {
-                                logger.severe(throwable.getMessage());
-                                imageServerConnected = false;
-                            },
-                            () -> {
-                                logger.info("finish refreshDownloadImageThread");
-                            }
-                    );
+
+            subscribeToprankImagesTimer.subscribe(aLong -> {
+                        if (sexyImageClient != null && sexyImageClient.isHealth() && !sexyImageClient.isSubscribingToprankImages()) {
+                            sexyImageClient.subscribeToprankImages(
+                                    downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage, (Image image) -> mFileImages.add(image));
+                        } else {
+                            sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort);
+                        }
+                    },
+                    throwable -> {
+                        logger.severe(throwable.getMessage());
+                    },
+                    () -> {
+                        logger.info("finish refreshDownloadImageThread");
+                    }
+            );
         }
     }
 

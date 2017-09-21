@@ -25,10 +25,11 @@ service Image {
     // streamed rather than returned at once (e.g. in a response message with a
     // repeated field), as the lastUpdated maybe an very old time and contain a
     // huge number of images.
-    rpc ListToprankImages (stream ToprankImageRequest) returns (stream ImageResponse) {
+    rpc SubscribeToprankImages (ToprankImageRequest) returns (stream ImageResponse) {
     }
 
-    rpc Visit (VisitRequest) returns (VisitResponse) {}
+    rpc Visit (VisitRequest) returns (VisitResponse) {
+    }
 
     rpc FindImage (FindImageRequest) returns (FindImageResponse) {
     }

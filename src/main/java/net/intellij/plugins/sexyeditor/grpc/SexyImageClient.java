@@ -10,12 +10,15 @@ import io.grpc.stub.StreamObserver;
 import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public class SexyImageClient {
@@ -27,70 +30,77 @@ public class SexyImageClient {
 
     private static final Logger logger = Logger.getLogger(SexyImageClient.class.getName());
 
-    private final Callback callback;
-    private final ManagedChannel channel;
-    private final ImageGrpc.ImageStub asyncStub;
-    private StreamObserver<ImageOuterClass.ToprankImageRequest> imageRequestStreamObserver = null;
+    public final ManagedChannel channel;
+    public final ImageGrpc.ImageStub asyncStub;
 
-    public SexyImageClient(String hostname, int port, SexyImageClient.Callback callback) {
+    public SexyImageClient(String hostname, int port) {
         channel = ManagedChannelBuilder.forAddress(hostname, port)
                 .usePlaintext(true)
                 .build();
         asyncStub = ImageGrpc.newStub(channel);
-        this.callback = callback;
     }
 
-    private StreamObserver<ImageOuterClass.ToprankImageRequest> getImageRequestStreamObserver() {
-        if (imageRequestStreamObserver == null) {
-            imageRequestStreamObserver =
-                    asyncStub.withWaitForReady().listToprankImages(
-                            new StreamObserver<ImageOuterClass.ImageResponse>() {
-                                @Override
-                                public void onNext(ImageOuterClass.ImageResponse response) {
-                                    Image image = Image
-                                            .builder()
-                                            .setUrl(response.getUrl())
-                                            .setInfoUrl(response.getInfoUrl())
-                                            .setType(response.getType())
-                                            .build();
-                                    callback.onImagemetaReceived(image);
-                                }
-
-                                @Override
-                                public void onError(Throwable t) {
-                                    logger.severe(t.getMessage());
-                                    imageRequestStreamObserver = null;
-                                }
-
-                                @Override
-                                public void onCompleted() {
-                                    logger.info("Completed");
-                                }
-                            });
-        }
-        return imageRequestStreamObserver;
-    }
 
     public void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
+    AtomicBoolean subscribingToprankImages = new AtomicBoolean(false);
 
-    public void refreshImages(boolean normal, boolean poster, boolean sexy, boolean porn) {
-        List<ImageOuterClass.ImageType> typeList = new ArrayList<ImageOuterClass.ImageType>() {{
+    class ToprankImagesStreamObserver implements StreamObserver<ImageOuterClass.ImageResponse> {
+        Callback callback;
+
+        public ToprankImagesStreamObserver(Callback callback) {
+            this.callback = callback;
+        }
+
+        @Override
+        public void onNext(ImageOuterClass.ImageResponse response) {
+            Image image = Image
+                    .builder()
+                    .setUrl(response.getUrl())
+                    .setInfoUrl(response.getInfoUrl())
+                    .setType(response.getType())
+                    .build();
+            callback.onImagemetaReceived(image);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            subscribingToprankImages.set(false);
+        }
+
+        @Override
+        public void onCompleted() {
+            subscribingToprankImages.set(false);
+        }
+    }
+
+    public boolean isSubscribingToprankImages() {
+        return subscribingToprankImages.get();
+    }
+
+    public void subscribeToprankImages(boolean normal, boolean poster, boolean sexy, boolean porn, Callback callback) {
+        List<ImageOuterClass.ImageType> typeList = getImageTypes(normal, poster, sexy, porn);
+        if (typeList.size() > 0) {
+            logger.info(String.format("subscribeToprankImages normal=%b,poster=%b,sexy=%b,porn=%b", normal, poster, sexy, porn));
+            ImageOuterClass.ToprankImageRequest request = ImageOuterClass.ToprankImageRequest
+                    .newBuilder()
+                    .addAllTypes(typeList)
+                    .build();
+            subscribingToprankImages.set(true);
+            asyncStub.withWaitForReady().subscribeToprankImages(request, new ToprankImagesStreamObserver(callback));
+        }
+    }
+
+    @NotNull
+    private List<ImageOuterClass.ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
+        return new ArrayList<ImageOuterClass.ImageType>() {{
             if (normal) this.add(ImageOuterClass.ImageType.NORMAL);
             if (poster) this.add(ImageOuterClass.ImageType.POSTER);
             if (sexy) this.add(ImageOuterClass.ImageType.SEXY);
             if (porn) this.add(ImageOuterClass.ImageType.PORN);
         }};
-        if (typeList.size() > 0) {
-            ImageOuterClass.ToprankImageRequest request = ImageOuterClass.ToprankImageRequest
-                    .newBuilder()
-                    .addAllTypes(typeList)
-                    .build();
-
-            getImageRequestStreamObserver().onNext(request);
-        }
     }
 
     public void visit(String imageUrl) {
@@ -130,29 +140,27 @@ public class SexyImageClient {
 
     public static void main(String[] args) throws Exception {
         final CountDownLatch finishLatch = new CountDownLatch(1);
-        SexyImageClient.Callback callback = new Callback() {
-            @Override
-            public void onImagemetaReceived(Image imageVo) {
-                logger.info(String.format("onImagemetaReceived imageVo=[%s]", gson.toJson(imageVo)));
-            }
-        };
-//        SexyImageClient client = new SexyImageClient("localhost", 42420, callback);
-        SexyImageClient client = new SexyImageClient("localhost", 8980, callback);
+        AtomicInteger msgCount = new AtomicInteger(0);
+
+        SexyImageClient.Callback callback = (Image imageVo) -> logger.info(
+                String.format("Callback.onImagemetaReceived i=%d imageVo=[%s]",
+                        msgCount.addAndGet(1), gson.toJson(imageVo))
+        );
+
+
+        SexyImageClient client = new SexyImageClient("localhost", 8980);
 
         if (client.isHealth()) {
-            client.refreshImages(true, false, false, false);
-            Thread.sleep(3000);
-            client.refreshImages(true, true, false, false);
-            Thread.sleep(3000);
-            client.refreshImages(true, true, true, false);
-            Thread.sleep(3000);
-            client.refreshImages(true, true, true, true);
 
+            client.subscribeToprankImages(true, false, false, false, callback);
             for (int i = 0; i > -1; i++) {
 //                logger.info(String.format("\n%d testing reconnect....=============================", i));
-//                client.refreshImages(true, false, false, false);
                 client.visit(String.format("%s?%d", "http://images6.fanpop.com/image/photos/36800000/Game-of-Thrones-Season-4-game-of-thrones-36858892-2832-4256.jpg", i));
-                Thread.sleep(1000);
+                Thread.sleep(30000);
+
+                if (!client.isSubscribingToprankImages()) {
+                    client.subscribeToprankImages(true, false, false, false, callback);
+                }
             }
         }
         // Receiving happens asynchronously
