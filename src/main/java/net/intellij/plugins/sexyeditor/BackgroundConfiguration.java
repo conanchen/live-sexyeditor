@@ -393,32 +393,36 @@ public class BackgroundConfiguration {
     }
 
 
-
-    Observable<Long> subscribeToprankImagesTimer = Observable
-            .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
-            .subscribeOn(Schedulers.computation())
-            .observeOn(Schedulers.io());
-
     public void startDownloadImageMetaRefreshIntervalThread() {
         if (!Strings.isNullOrEmpty(imageServerHost)) {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
 
-            subscribeToprankImagesTimer.subscribe(aLong -> {
-                        if (sexyImageClient != null && sexyImageClient.isHealth() && !sexyImageClient.isSubscribingToprankImages()) {
-                            sexyImageClient.subscribeToprankImages(
-                                    downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage, (Image image) -> mFileImages.add(image));
-                        } else {
-                            sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort);
-                        }
-                    },
-                    throwable -> {
-                        logger.severe(throwable.getMessage());
-                    },
-                    () -> {
-                        logger.info("finish refreshDownloadImageThread");
-                    }
-            );
+            Observable
+                    .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.computation())
+                    .observeOn(Schedulers.io())
+                    .subscribe(aLong -> {
+                                if (sexyImageClient == null || !sexyImageClient.isHealth()) {
+                                    sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort);
+                                } else {
+                                    if (downloadNormalImage || downloadPosterImage || downloadSexyImage || downloadPornImage) {
+                                        if (!sexyImageClient.isSubscribingToprankImages()) {
+                                            sexyImageClient.subscribeToprankImages(
+                                                    downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage, (Image image) -> mFileImages.add(image));
+                                        }
+                                    } else {
+                                        downloadNormalImage = true;
+                                    }
+                                }
+                            },
+                            throwable -> {
+                                logger.severe(throwable.getMessage());
+                            },
+                            () -> {
+                                logger.info("finish refreshDownloadImageThread");
+                            }
+                    );
         }
     }
 
