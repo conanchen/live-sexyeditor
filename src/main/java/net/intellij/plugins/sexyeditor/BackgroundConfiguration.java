@@ -8,8 +8,11 @@ import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import net.intellij.plugins.sexyeditor.action.SexyAction;
 import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
+import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -397,6 +400,7 @@ public class BackgroundConfiguration {
         if (!Strings.isNullOrEmpty(imageServerHost)) {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
+            Set<ImageOuterClass.ImageType> currentSubscribeImageTypes = new HashSet<>();
 
             Observable
                     .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
@@ -407,10 +411,9 @@ public class BackgroundConfiguration {
                                     sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort);
                                 } else {
                                     if (downloadNormalImage || downloadPosterImage || downloadSexyImage || downloadPornImage) {
-                                        if (!sexyImageClient.isSubscribingToprankImages()) {
-                                            sexyImageClient.subscribeToprankImages(
-                                                    downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage, (Image image) -> mFileImages.add(image));
-                                        }
+                                        sexyImageClient.startSubscribeIfNeed(
+                                                SexyImageClient.getImageTypes(downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage),
+                                                (Image image) -> mFileImages.add(image));
                                     } else {
                                         downloadNormalImage = true;
                                     }

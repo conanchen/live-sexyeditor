@@ -1,19 +1,22 @@
 package net.intellij.plugins.sexyeditor.grpc;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
+import io.grpc.netty.NettyChannelBuilder;
+import io.grpc.stub.ClientCallStreamObserver;
+import io.grpc.stub.ClientResponseObserver;
 import io.grpc.stub.StreamObserver;
 import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -22,21 +25,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public class SexyImageClient {
-    public interface Callback {
-        void onImagemetaReceived(Image image);
+
+    public interface SubcribeImageCallback {
+        void onImageReceived(Image image);
     }
 
     private static final Gson gson = new Gson();
 
     private static final Logger logger = Logger.getLogger(SexyImageClient.class.getName());
 
-    public final ManagedChannel channel;
-    public final ImageGrpc.ImageStub asyncStub;
+    private final ManagedChannel channel;
+    private final ImageGrpc.ImageStub asyncStub;
+    private final AtomicBoolean isSubscribingImages = new AtomicBoolean(false);
+    private final Set<ImageOuterClass.ImageType> currentSubscribeImageTypes = new HashSet<>();
+
 
     public SexyImageClient(String hostname, int port) {
-        channel = ManagedChannelBuilder.forAddress(hostname, port)
+        channel = NettyChannelBuilder
+                .forAddress(hostname, port)
                 .usePlaintext(true)
+                .keepAliveTime(60, TimeUnit.SECONDS)
                 .build();
+
         asyncStub = ImageGrpc.newStub(channel);
     }
 
@@ -45,13 +55,26 @@ public class SexyImageClient {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    AtomicBoolean subscribingToprankImages = new AtomicBoolean(false);
+    ClientCallStreamObserver<ImageOuterClass.ImageRequest> subscribeStream;
 
-    class ToprankImagesStreamObserver implements StreamObserver<ImageOuterClass.ImageResponse> {
-        Callback callback;
+    class SubscribeImagesStreamObserver implements ClientResponseObserver<ImageOuterClass.ImageRequest, ImageOuterClass.ImageResponse> {
 
-        public ToprankImagesStreamObserver(Callback callback) {
-            this.callback = callback;
+
+        SubcribeImageCallback subcribeImageCallback;
+
+        public SubscribeImagesStreamObserver(SubcribeImageCallback subcribeImageCallback) {
+            this.subcribeImageCallback = subcribeImageCallback;
+        }
+
+
+        @Override
+        public void beforeStart(ClientCallStreamObserver requestStream) {
+            subscribeStream = requestStream;
+            subscribeStream.disableAutoInboundFlowControl();
+            subscribeStream.setOnReadyHandler(() -> {
+                isSubscribingImages.set(true);
+                logger.info(String.format("%s", "setOnReadyHandler isSubscribingImages.set(true)"));
+            });
         }
 
         @Override
@@ -62,46 +85,49 @@ public class SexyImageClient {
                     .setInfoUrl(response.getInfoUrl())
                     .setType(response.getType())
                     .build();
-            callback.onImagemetaReceived(image);
+            subcribeImageCallback.onImageReceived(image);
+            subscribeStream.request(1);
+            logger.info(String.format("%s", "onNext subscribeStream.request(1)"));
         }
+
 
         @Override
         public void onError(Throwable t) {
-            subscribingToprankImages.set(false);
+            isSubscribingImages.set(false);
+            logger.info(String.format("%s", "onError isSubscribingImages.set(false)"));
         }
 
         @Override
         public void onCompleted() {
-            subscribingToprankImages.set(false);
+            isSubscribingImages.set(false);
+            logger.info(String.format("%s", "onCompleted isSubscribingImages.set(false)"));
         }
     }
 
-    public boolean isSubscribingToprankImages() {
-        return subscribingToprankImages.get();
-    }
 
-    public void subscribeToprankImages(boolean normal, boolean poster, boolean sexy, boolean porn, Callback callback) {
-        List<ImageOuterClass.ImageType> typeList = getImageTypes(normal, poster, sexy, porn);
-        if (typeList.size() > 0) {
-            logger.info(String.format("subscribeToprankImages normal=%b,poster=%b,sexy=%b,porn=%b", normal, poster, sexy, porn));
-            ImageOuterClass.ImageRequest request = ImageOuterClass.ImageRequest
-                    .newBuilder()
-                    .addAllTypes(typeList)
-                    .build();
-            subscribingToprankImages.set(true);
-            asyncStub.withWaitForReady().subscribeImages(request, new ToprankImagesStreamObserver(callback));
+    public void startSubscribeIfNeed(Set<ImageOuterClass.ImageType> imageTypes, SubcribeImageCallback subcribeImageCallback) {
+        assert imageTypes != null && imageTypes.size() > 0;
+        if (needToStart(imageTypes)) {
+            currentSubscribeImageTypes.clear();
+            currentSubscribeImageTypes.addAll(imageTypes);
+            asyncStub.withWaitForReady()
+                    .subscribeImages(ImageOuterClass.ImageRequest
+                                    .newBuilder()
+                                    .addAllTypes(imageTypes)
+                                    .build()
+                            , new SubscribeImagesStreamObserver(subcribeImageCallback)
+                    );
+            logger.info(String.format("startSubscribeIfNeed imageTypes=[%s]", gson.toJson(imageTypes.toArray())));
         }
+
     }
 
-    @NotNull
-    private List<ImageOuterClass.ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
-        return new ArrayList<ImageOuterClass.ImageType>() {{
-            if (normal) this.add(ImageOuterClass.ImageType.NORMAL);
-            if (poster) this.add(ImageOuterClass.ImageType.POSTER);
-            if (sexy) this.add(ImageOuterClass.ImageType.SEXY);
-            if (porn) this.add(ImageOuterClass.ImageType.PORN);
-        }};
+    private boolean needToStart(Set<ImageOuterClass.ImageType> imageTypes) {
+        boolean result = Sets.difference(currentSubscribeImageTypes, imageTypes).size() > 0 || !isSubscribingImages.get();
+        logger.info(String.format("needToStart is %b", result));
+        return result;
     }
+
 
     public void visit(String imageUrl) {
         ImageOuterClass.VisitRequest visitRequest = ImageOuterClass.VisitRequest.newBuilder().setUrl(imageUrl).build();
@@ -138,13 +164,15 @@ public class SexyImageClient {
         return false;
     }
 
-    private static int port = 8980;
     public static void main(String[] args) throws Exception {
+        int port = 8980;
+//        int port = 42420;
+
         final CountDownLatch finishLatch = new CountDownLatch(1);
         AtomicInteger msgCount = new AtomicInteger(0);
 
-        SexyImageClient.Callback subscribeCallback = (Image imageVo) -> logger.info(
-                String.format("subscribeCallback.onImagemetaReceived i=%d imageVo=[%s]",
+        SubcribeImageCallback subscribeSubcribeImageCallback = (Image imageVo) -> logger.info(
+                String.format("subscribeCallback.onImageReceived i=%d imageVo=[%s]",
                         msgCount.addAndGet(1), gson.toJson(imageVo))
         );
 
@@ -153,18 +181,31 @@ public class SexyImageClient {
 
         if (client.isHealth()) {
 
-            client.subscribeToprankImages(true, false, false, false, subscribeCallback);
+            client.startSubscribeIfNeed(getImageTypes(true, false, false, false), subscribeSubcribeImageCallback);
             for (int i = 0; i > -1; i++) {
                 client.visit(String.format("%s?%d", "http://images6.fanpop.com/image/photos/36800000/Game-of-Thrones-Season-4-game-of-thrones-36858892-2832-4256.jpg", i));
                 Thread.sleep(30000);
-
-                if (!client.isSubscribingToprankImages()) {
-                    client.subscribeToprankImages(true, false, false, false, subscribeCallback);
-                }
+                client.startSubscribeIfNeed(getImageTypes(true, false, false, false), subscribeSubcribeImageCallback);
             }
         }
         // Receiving happens asynchronously
         finishLatch.await(1, TimeUnit.MINUTES);
+
         client.shutdown();
     }
+
+
+    @NotNull
+    public static Set<ImageOuterClass.ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
+        return new HashSet<ImageOuterClass.ImageType>() {
+            {
+                if (normal) add(ImageOuterClass.ImageType.NORMAL);
+                if (poster) add(ImageOuterClass.ImageType.POSTER);
+                if (sexy) add(ImageOuterClass.ImageType.SEXY);
+                if (porn) add(ImageOuterClass.ImageType.PORN);
+            }
+        };
+    }
+
+
 } 

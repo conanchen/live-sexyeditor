@@ -1,6 +1,7 @@
 package net.intellij.plugins.sexyeditor.grpc;
 
 import com.google.gson.Gson;
+import groovy.lang.Tuple2;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.health.v1.HealthCheckRequest;
@@ -8,6 +9,8 @@ import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
 import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
 import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
@@ -29,7 +32,6 @@ public class SexyTestServer {
     private Server server;
 
     private void start() throws Exception {
-        logger.info("Starting the grpc server");
 
         server = ServerBuilder.forPort(port)
                 .addService(new GreeterImpl())
@@ -37,9 +39,9 @@ public class SexyTestServer {
                 .addService(new HealthGrpc.HealthImplBase() {
                     @Override
                     public void check(HealthCheckRequest request, StreamObserver<HealthCheckResponse> responseObserver) {
-                        logger.info(String.format("check by HealthCheckRequest=[%s]",gson.toJson(request)));
-                       responseObserver.onNext(HealthCheckResponse.newBuilder().setStatus(HealthCheckResponse.ServingStatus.SERVING).build());
-                       responseObserver.onCompleted();
+                        logger.info(String.format("check by HealthCheckRequest=[%s]", gson.toJson(request)));
+                        responseObserver.onNext(HealthCheckResponse.newBuilder().setStatus(HealthCheckResponse.ServingStatus.SERVING).build());
+                        responseObserver.onCompleted();
                     }
                 })
                 .build()
@@ -93,20 +95,23 @@ public class SexyTestServer {
     }
 
     private class ImageImpl extends ImageGrpc.ImageImplBase {
+        List<Image> images = new ArrayList<Image>() {
+            {
+                for (int i = 0; i < 10; i++) {
+                    add(Image.builder()
+                            .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg?i=" + i)
+                            .setInfoUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
+                            .setType(ImageOuterClass.ImageType.NORMAL)
+                            .build());
+                }
+            }
+        };
+
         @Override
         public void subscribeImages(ImageOuterClass.ImageRequest request, StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
-
-            List<Image> images = new ArrayList<Image>() {{
-                add(Image
-                        .builder()
-                        .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
-                        .setInfoUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
-                        .setType(ImageOuterClass.ImageType.NORMAL)
-                        .build());
-            }};
-
             Observable.interval(3, TimeUnit.SECONDS).subscribe(aLong -> {
-                for (Image im:images) {
+                logger.info(String.format("aLong=%d push images", aLong));
+                for (Image im : images) {
                     responseObserver.onNext(ImageOuterClass.ImageResponse.newBuilder()
                             .setUrl(im.url)
                             .setInfoUrl(im.infoUrl)
@@ -119,7 +124,7 @@ public class SexyTestServer {
 
         @Override
         public void visit(ImageOuterClass.VisitRequest request, StreamObserver<ImageOuterClass.VisitResponse> responseObserver) {
-            logger.info(String.format("VisitRequest.url=[%s]",request.getUrl()));
+            logger.info(String.format("VisitRequest.url=[%s]", request.getUrl()));
             responseObserver.onNext(ImageOuterClass.VisitResponse.newBuilder().setError(Common.Error.newBuilder().setCode("IMAGE.VISIT.OK").build()).build());
             responseObserver.onCompleted();
         }
