@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/git-live-sexyeditor_main.iml" filepath="$PROJECT_DIR$/.idea/modules/git-live-sexyeditor_main.iml" group="live-sexyeditor" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/git-live-sexyeditor_test.iml" filepath="$PROJECT_DIR$/.idea/modules/git-live-sexyeditor_test.iml" group="live-sexyeditor" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hiask-live-sexyeditor.iml" filepath="$PROJECT_DIR$/.idea/modules/hiask-live-sexyeditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hiask-live-sexyeditor_main.iml" filepath="$PROJECT_DIR$/.idea/modules/hiask-live-sexyeditor_main.iml" group="live-sexyeditor" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/hiask-live-sexyeditor_test.iml" filepath="$PROJECT_DIR$/.idea/modules/hiask-live-sexyeditor_test.iml" group="live-sexyeditor" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/live-sexyeditor.iml" filepath="$PROJECT_DIR$/.idea/modules/live-sexyeditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/live-sexyeditor_main.iml" filepath="$PROJECT_DIR$/.idea/modules/live-sexyeditor_main.iml" group="live-sexyeditor" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/live-sexyeditor_test.iml" filepath="$PROJECT_DIR$/.idea/modules/live-sexyeditor_test.iml" group="live-sexyeditor" />

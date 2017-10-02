@@ -25,14 +25,14 @@ service Image {
     // streamed rather than returned at once (e.g. in a response message with a
     // repeated field), as the lastUpdated maybe an very old time and contain a
     // huge number of images.
-    rpc SubscribeImages (ImageRequest) returns (stream ImageResponse) {
+    rpc Subscribe (SubscribeRequest) returns (stream ImageResponse) {
     }
 
     rpc Visit (VisitRequest) returns (VisitResponse) {
     }
 }
 
-message ImageRequest {
+message SubscribeRequest {
     repeated ImageType types = 1;
 }
 
@@ -43,26 +43,4 @@ message VisitRequest {
 
 message VisitResponse {
     Error error = 1;
-}
-
-message ImageResponse {
-    string url = 1;
-    string infoUrl = 2;
-    string title = 3;
-    string desc = 4;
-    ImageType type = 5;
-    int64 lastUpdated = 6;
-    bool active = 7;
-}
-
-message FindImageResponse {
-    Error error = 1;
-    ImageResponse imageResponse = 2;
-}
-
-enum ImageType {
-    NORMAL = 0;
-    POSTER = 1;
-    SEXY = 2;
-    PORN = 3;
 }

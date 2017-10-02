@@ -13,6 +13,7 @@ import io.grpc.stub.StreamObserver;
 import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import org.ditto.sexyimage.grpc.Common;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -37,7 +38,7 @@ public class SexyImageClient {
     private final ManagedChannel channel;
     private final ImageGrpc.ImageStub asyncStub;
     private final AtomicBoolean isSubscribingImages = new AtomicBoolean(false);
-    private final Set<ImageOuterClass.ImageType> currentSubscribeImageTypes = new HashSet<>();
+    private final Set<Common.ImageType> currentSubscribeImageTypes = new HashSet<>();
 
 
     public SexyImageClient(String hostname, int port) {
@@ -55,9 +56,10 @@ public class SexyImageClient {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    ClientCallStreamObserver<ImageOuterClass.ImageRequest> subscribeStream;
+    ClientCallStreamObserver<ImageOuterClass.SubscribeRequest> subscribeStream;
 
-    class SubscribeImagesStreamObserver implements ClientResponseObserver<ImageOuterClass.ImageRequest, ImageOuterClass.ImageResponse> {
+    class SubscribeImagesStreamObserver implements ClientResponseObserver<
+            ImageOuterClass.SubscribeRequest, Common.ImageResponse> {
 
 
         SubcribeImageCallback subcribeImageCallback;
@@ -78,7 +80,7 @@ public class SexyImageClient {
         }
 
         @Override
-        public void onNext(ImageOuterClass.ImageResponse response) {
+        public void onNext(Common.ImageResponse response) {
             Image image = Image
                     .builder()
                     .setUrl(response.getUrl())
@@ -105,13 +107,13 @@ public class SexyImageClient {
     }
 
 
-    public void startSubscribeIfNeed(Set<ImageOuterClass.ImageType> imageTypes, SubcribeImageCallback subcribeImageCallback) {
+    public void startSubscribeIfNeed(Set<Common.ImageType> imageTypes, SubcribeImageCallback subcribeImageCallback) {
         assert imageTypes != null && imageTypes.size() > 0;
         if (needToStart(imageTypes)) {
             currentSubscribeImageTypes.clear();
             currentSubscribeImageTypes.addAll(imageTypes);
             asyncStub.withWaitForReady()
-                    .subscribeImages(ImageOuterClass.ImageRequest
+                    .subscribe(ImageOuterClass.SubscribeRequest
                                     .newBuilder()
                                     .addAllTypes(imageTypes)
                                     .build()
@@ -122,7 +124,7 @@ public class SexyImageClient {
 
     }
 
-    private boolean needToStart(Set<ImageOuterClass.ImageType> imageTypes) {
+    private boolean needToStart(Set<Common.ImageType> imageTypes) {
         boolean result = Sets.difference(currentSubscribeImageTypes, imageTypes).size() > 0 || !isSubscribingImages.get();
         logger.info(String.format("needToStart is %b", result));
         return result;
@@ -165,6 +167,15 @@ public class SexyImageClient {
     }
 
     public static void main(String[] args) throws Exception {
+        boolean normal = false, poster = false, sexy = false, porn = false;
+        for (int i = 0; i < args.length; i++) {
+            String subscribeType = args[i];
+            normal = normal ? normal : "normal" .equals(subscribeType);
+            poster = poster ? poster : "poster" .equals(subscribeType);
+            sexy = sexy ? sexy : "sexy" .equals(subscribeType);
+            porn = porn ? porn : "porn" .equals(subscribeType);
+        }
+
         int port = 8980;
 //        int port = 42420;
 
@@ -181,11 +192,11 @@ public class SexyImageClient {
 
         if (client.isHealth()) {
 
-            client.startSubscribeIfNeed(getImageTypes(true, false, false, false), subscribeSubcribeImageCallback);
+            client.startSubscribeIfNeed(getImageTypes(normal, poster, sexy, porn), subscribeSubcribeImageCallback);
             for (int i = 0; i > -1; i++) {
                 client.visit(String.format("%s?%d", "http://images6.fanpop.com/image/photos/36800000/Game-of-Thrones-Season-4-game-of-thrones-36858892-2832-4256.jpg", i));
                 Thread.sleep(30000);
-                client.startSubscribeIfNeed(getImageTypes(true, false, false, false), subscribeSubcribeImageCallback);
+                client.startSubscribeIfNeed(getImageTypes(normal, poster, sexy, porn), subscribeSubcribeImageCallback);
             }
         }
         // Receiving happens asynchronously
@@ -196,13 +207,14 @@ public class SexyImageClient {
 
 
     @NotNull
-    public static Set<ImageOuterClass.ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
-        return new HashSet<ImageOuterClass.ImageType>() {
+    public static Set<Common.ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
+        return new HashSet<Common.ImageType>() {
             {
-                if (normal) add(ImageOuterClass.ImageType.NORMAL);
-                if (poster) add(ImageOuterClass.ImageType.POSTER);
-                if (sexy) add(ImageOuterClass.ImageType.SEXY);
-                if (porn) add(ImageOuterClass.ImageType.PORN);
+                if (normal) add(
+                        Common.ImageType.NORMAL);
+                if (poster) add(Common.ImageType.POSTER);
+                if (sexy) add(Common.ImageType.SEXY);
+                if (porn) add(Common.ImageType.PORN);
             }
         };
     }

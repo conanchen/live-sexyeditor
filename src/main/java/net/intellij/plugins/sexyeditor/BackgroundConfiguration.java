@@ -9,6 +9,7 @@ import io.reactivex.schedulers.Schedulers;
 import net.intellij.plugins.sexyeditor.action.SexyAction;
 import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
 import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
+import org.ditto.sexyimage.grpc.Common;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -400,7 +401,7 @@ public class BackgroundConfiguration {
         if (!Strings.isNullOrEmpty(imageServerHost)) {
             logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
                     "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
-            Set<ImageOuterClass.ImageType> currentSubscribeImageTypes = new HashSet<>();
+            Set<Common.ImageType> currentSubscribeImageTypes = new HashSet<>();
 
             Observable
                     .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)

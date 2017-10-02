@@ -7,6 +7,8 @@
     <bytecodeTargetLevel>
       <module name="git-live-sexyeditor_main" target="1.8" />
       <module name="git-live-sexyeditor_test" target="1.8" />
+      <module name="hiask-live-sexyeditor_main" target="1.8" />
+      <module name="hiask-live-sexyeditor_test" target="1.8" />
       <module name="live-sexyeditor_main" target="1.8" />
       <module name="live-sexyeditor_src" target="1.8" />
       <module name="live-sexyeditor_test" target="1.8" />

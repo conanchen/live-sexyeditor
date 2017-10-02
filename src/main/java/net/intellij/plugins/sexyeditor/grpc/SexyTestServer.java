@@ -1,7 +1,6 @@
 package net.intellij.plugins.sexyeditor.grpc;
 
 import com.google.gson.Gson;
-import groovy.lang.Tuple2;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.health.v1.HealthCheckRequest;
@@ -9,8 +8,6 @@ import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.functions.Function;
 import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
 import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
@@ -19,7 +16,10 @@ import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 import org.ditto.sexyimage.grpc.Common;
 
 import java.text.DateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -101,18 +101,18 @@ public class SexyTestServer {
                     add(Image.builder()
                             .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg?i=" + i)
                             .setInfoUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
-                            .setType(ImageOuterClass.ImageType.NORMAL)
+                            .setType(Common.ImageType.NORMAL)
                             .build());
                 }
             }
         };
 
         @Override
-        public void subscribeImages(ImageOuterClass.ImageRequest request, StreamObserver<ImageOuterClass.ImageResponse> responseObserver) {
+        public void subscribe(ImageOuterClass.SubscribeRequest request, StreamObserver<Common.ImageResponse> responseObserver) {
             Observable.interval(3, TimeUnit.SECONDS).subscribe(aLong -> {
                 logger.info(String.format("aLong=%d push images", aLong));
                 for (Image im : images) {
-                    responseObserver.onNext(ImageOuterClass.ImageResponse.newBuilder()
+                    responseObserver.onNext(Common.ImageResponse.newBuilder()
                             .setUrl(im.url)
                             .setInfoUrl(im.infoUrl)
                             .setType(im.type)
