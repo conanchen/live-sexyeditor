@@ -1,4 +1,4 @@
-package net.intellij.plugins.sexyeditor;
+package net.intellij.plugins.sexyeditor.grpc;
 
 import com.google.common.base.Strings;
 import org.ditto.sexyimage.grpc.Common;

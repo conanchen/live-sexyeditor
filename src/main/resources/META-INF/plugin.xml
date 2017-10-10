@@ -38,11 +38,11 @@
     </extensions>
 
     <actions>
-        <group id="LiveSexyEditor.SexyMenu" text="Sexy" description="Live Sexy Editor menu">
+        <group id="LiveSexyEditor.SexyMenu" text="Sexy Image" description="Live Sexy Editor menu">
             <add-to-group group-id="HelpMenu" anchor="last"/>
             <add-to-group group-id="ToolbarFindGroup" anchor="first" />
             <action id="LiveSexyEditor.SexyAction"
-                    class="net.intellij.plugins.sexyeditor.action.SexyAction" text="Sexy"
+                    class="net.intellij.plugins.sexyeditor.action.SexyAction" text="Sexy Image"
                     description="Visit Sexy Image Webpage" icon="/net/intellij/plugins/sexyeditor/gfx/icon.jpg"/>
         </group>
     </actions>

@@ -8,7 +8,6 @@ import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
 import io.reactivex.Observable;
-import net.intellij.plugins.sexyeditor.Image;
 import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
 import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
 import net.intellij.plugins.sexyeditor.image.ImageGrpc;
@@ -47,7 +46,7 @@ public class SexyTestServer {
                 .build()
                 .start();
 
-        logger.info("Server started. Listening on port " + port);
+        logger.info("Server started. Listening on PORT " + port);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.err.println("*** JVM is shutting down. Turning off grpc server as well ***");

@@ -38,7 +38,7 @@ public class SexyEditorState implements PersistentStateComponent<SexyEditorState
 		XmlSerializerUtil.copyBean(state, this);
 
 		for (BackgroundConfiguration c:configs) {
-			c.startDownloadImageMetaRefreshIntervalThread();
+			c.startLiveImagesRefreshIntervalThread();
 		}
 	}
 

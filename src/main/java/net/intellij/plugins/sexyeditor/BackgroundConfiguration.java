@@ -2,18 +2,17 @@ package net.intellij.plugins.sexyeditor;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.EvictingQueue;
+import com.google.gson.Gson;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.fileTypes.WildcardFileNameMatcher;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 import net.intellij.plugins.sexyeditor.action.SexyAction;
+import net.intellij.plugins.sexyeditor.grpc.Image;
 import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
 import org.ditto.sexyimage.grpc.Common;
 
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -23,6 +22,7 @@ import java.util.logging.Logger;
  */
 public class BackgroundConfiguration {
     private static final Logger logger = Logger.getLogger(BackgroundConfiguration.class.getName());
+    private static final Gson gson = new Gson();
 
     public static final int POSITION_TOP_LEFT = 0;
     public static final int POSITION_TOP_MIDDLE = 1;
@@ -87,9 +87,6 @@ public class BackgroundConfiguration {
      * Pause in milliseconds between two slides.
      */
     protected int slideshowPause = 3;
-    private String imageServerHost;
-    private int imageServerPort;
-    private boolean imageServerConnected = false;
     private boolean downloadNormalImage;
     private boolean downloadSexyImage;
     private boolean downloadPornImage;
@@ -97,11 +94,10 @@ public class BackgroundConfiguration {
     /**
      * Queue of live images .
      */
-    private final static int IMAGE_QUEUE_CAPACITY = 30;
-    private final static int IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY = IMAGE_QUEUE_CAPACITY / 5;
-    private final static int IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS = 10; //300
-    private EvictingQueue<Image> mFileImages = EvictingQueue.create(IMAGE_QUEUE_CAPACITY);
-    private SexyImageClient sexyImageClient = null;
+    private EvictingQueue<Image> mNormalImages = EvictingQueue.create(SexyImageClient.IMAGE_QUEUE_CAPACITY);
+    private EvictingQueue<Image> mPosterImages = EvictingQueue.create(SexyImageClient.IMAGE_QUEUE_CAPACITY);
+    private EvictingQueue<Image> mSexyImages = EvictingQueue.create(SexyImageClient.IMAGE_QUEUE_CAPACITY);
+    private EvictingQueue<Image> mPornImages = EvictingQueue.create(SexyImageClient.IMAGE_QUEUE_CAPACITY);
     // ---------------------------------------------------------------- access
 
     public String getName() {
@@ -198,41 +194,38 @@ public class BackgroundConfiguration {
         this.shrinkValue = shrinkValue;
     }
 
-    public void setImageServerHost(String imageServerHost) {
-        this.imageServerHost = imageServerHost;
+    public void setDownloadNormalImage(boolean downloadNormalImage) {
+        this.downloadNormalImage = downloadNormalImage;
+        if (!downloadNormalImage) {
+            mNormalImages.clear();
+        }
     }
 
-    public String getImageServerHost() {
-        return imageServerHost;
+    public void setDownloadPosterImage(boolean downloadPosterImage) {
+        this.downloadPosterImage = downloadPosterImage;
+        if (!downloadPosterImage) {
+            mPosterImages.clear();
+        }
     }
 
-    public void setImageServerPort(int imageServerPort) {
-        this.imageServerPort = imageServerPort;
+    public void setDownloadSexyImage(boolean downloadSexyImage) {
+        this.downloadSexyImage = downloadSexyImage;
+        if (!downloadSexyImage) {
+            mSexyImages.clear();
+        }
     }
 
-    public int getImageServerPort() {
-        return imageServerPort;
-    }
-
-    public boolean isImageServerConnected() {
-        return imageServerConnected;
-    }
-
-    public void setImageServerConnected(boolean imageServerConnected) {
-        this.imageServerConnected = imageServerConnected;
+    public void setDownloadPornImage(boolean downloadPornImage) {
+        this.downloadPornImage = downloadPornImage;
+        if (!downloadPornImage) {
+            mPornImages.clear();
+        }
     }
 
     public boolean isDownloadNormalImage() {
         return downloadNormalImage;
     }
 
-    public void setDownloadNormalImage(boolean downloadNormalImage) {
-        this.downloadNormalImage = downloadNormalImage;
-    }
-
-    public void setDownloadPosterImage(boolean downloadPosterImage) {
-        this.downloadPosterImage = downloadPosterImage;
-    }
 
     public boolean isDownloadPosterImage() {
         return downloadPosterImage;
@@ -242,16 +235,9 @@ public class BackgroundConfiguration {
         return downloadSexyImage;
     }
 
-    public void setDownloadSexyImage(boolean downloadSexyImage) {
-        this.downloadSexyImage = downloadSexyImage;
-    }
 
     public boolean isDownloadPornImage() {
         return downloadPornImage;
-    }
-
-    public void setDownloadPornImage(boolean downloadPornImage) {
-        this.downloadPornImage = downloadPornImage;
     }
 
     // ---------------------------------------------------------------- runtime
@@ -281,38 +267,56 @@ public class BackgroundConfiguration {
      */
     public String getNextImage() {
         int totalFiles = fileNames == null ? 0 : fileNames.length;
-        int totalImageVos = mFileImages == null ? 0 : mFileImages.size();
-        if (totalFiles == 0 && totalImageVos == 0) {
+        int totalNormalImages = mNormalImages == null ? 0 : mNormalImages.size();
+        int totalPosterImages = mPosterImages == null ? 0 : mPosterImages.size();
+        int totalSexyImages = mSexyImages == null ? 0 : mSexyImages.size();
+        int totalPornImages = mPornImages == null ? 0 : mPornImages.size();
+        if (totalFiles == 0 && totalNormalImages == 0 && totalPosterImages == 0 && totalSexyImages == 0 && totalPornImages == 0) {
             return null;
         }
 
         if (random) {
-            imageIndex = rnd.nextInt(totalFiles + totalImageVos);
+            imageIndex = rnd.nextInt(totalFiles + totalNormalImages + totalPosterImages + totalSexyImages + totalPornImages);
         } else {
             imageIndex++;
-            if (imageIndex >= totalFiles + totalImageVos) {
+            if (imageIndex >= totalFiles + totalNormalImages + totalPosterImages + totalSexyImages + totalPornImages) {
                 imageIndex = 0;
             }
         }
         ActionManager am = ActionManager.getInstance();
         SexyAction action = (SexyAction) am.getAction("LiveSexyEditor.SexyAction");
         if (imageIndex < totalFiles) {
-            action.setSexyImageClient(sexyImageClient).setUrl(fileNames[imageIndex]).setInfoUrl(fileNames[imageIndex]);
+            action.setUrl(fileNames[imageIndex]).setInfoUrl(fileNames[imageIndex]);
             return fileNames[imageIndex];
         } else {
-            Image image = mFileImages.poll();
+            Image image;
+            if (imageIndex < totalFiles + totalNormalImages) {
+                image = pollImageFromAndAddBackTo(mNormalImages);
+            } else if (imageIndex < totalFiles + totalNormalImages + totalPosterImages) {
+                image = pollImageFromAndAddBackTo(mPosterImages);
+            } else if (imageIndex < totalFiles + totalNormalImages + totalPosterImages + totalSexyImages) {
+                image = pollImageFromAndAddBackTo(mSexyImages);
+            } else {
+                image = pollImageFromAndAddBackTo(mPornImages);
+            }
             if (image != null) {
-                if (mFileImages.remainingCapacity() > IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
-                    mFileImages.add(image);
-                }
                 String inforUrl1 = Strings.isNullOrEmpty(image.infoUrl) ? image.url : image.infoUrl;
-                action.setSexyImageClient(sexyImageClient)
-                        .setUrl(image.url)
-                        .setInfoUrl(inforUrl1);
+                action.setUrl(image.url).setInfoUrl(inforUrl1);
+                //TODO: use CachingHttpClients to cache remote images
                 return image.url;
             }
         }
         return null;
+    }
+
+    private Image pollImageFromAndAddBackTo(EvictingQueue<Image> mNormalImages) {
+        Image image = mNormalImages.poll();
+        if (image != null) {
+            if (mNormalImages.remainingCapacity() > SexyImageClient.IMAGE_QUEUE_ADD_BACK_LEAST_CAPACITY) {
+                mNormalImages.add(image);
+            }
+        }
+        return image;
     }
 
 
@@ -397,37 +401,44 @@ public class BackgroundConfiguration {
     }
 
 
-    public void startDownloadImageMetaRefreshIntervalThread() {
-        if (!Strings.isNullOrEmpty(imageServerHost)) {
-            logger.info(String.format("going to start startDownloadImageMetaRefreshIntervalThread..." +
-                    "imageServerHost=%s,imageServerPort=%d", imageServerHost, imageServerPort));
-            Set<Common.ImageType> currentSubscribeImageTypes = new HashSet<>();
+    public void startLiveImagesRefreshIntervalThread() {
+        logger.info(String.format("going to start startLiveImagesRefreshIntervalThread..." +
+                "imageServerHost=%s,imageServerPort=%d", SexyImageClient.HOSTNAME, SexyImageClient.PORT));
 
-            Observable
-                    .interval(IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
-                    .subscribeOn(Schedulers.computation())
-                    .observeOn(Schedulers.io())
-                    .subscribe(aLong -> {
-                                if (sexyImageClient == null || !sexyImageClient.isHealth()) {
-                                    sexyImageClient = new SexyImageClient(imageServerHost, imageServerPort);
-                                } else {
-                                    if (downloadNormalImage || downloadPosterImage || downloadSexyImage || downloadPornImage) {
-                                        sexyImageClient.startSubscribeIfNeed(
-                                                SexyImageClient.getImageTypes(downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage),
-                                                (Image image) -> mFileImages.add(image));
-                                    } else {
-                                        downloadNormalImage = true;
-                                    }
-                                }
-                            },
-                            throwable -> {
-                                logger.severe(throwable.getMessage());
-                            },
-                            () -> {
-                                logger.info("finish refreshDownloadImageThread");
+        Observable
+                .interval(SexyImageClient.IMAGE_QUEUE_REFRESH_INTERVAL_SECONDS, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(Schedulers.io())
+                .subscribe(aLong -> {
+                            if (downloadNormalImage || downloadPosterImage || downloadSexyImage || downloadPornImage) {
+                                SexyImageClient.getInstance().startSubscribeIfNeed(
+                                        SexyImageClient.getImageTypes(downloadNormalImage, downloadPosterImage, downloadSexyImage, downloadPornImage),
+                                        new SexyImageClient.SubcribeImageCallback() {
+                                            @Override
+                                            public void onImageReceived(Image image) {
+                                                logger.info(String.format("onImageReceived image=[%s]", gson.toJson(image)));
+                                                if (Common.ImageType.NORMAL.equals(image.type)) {
+                                                    mNormalImages.add(image);
+                                                } else if (Common.ImageType.POSTER.equals(image.type)) {
+                                                    mPosterImages.add(image);
+                                                } else if (Common.ImageType.SEXY.equals(image.type)) {
+                                                    mSexyImages.add(image);
+                                                } else if (Common.ImageType.PORN.equals(image.type)) {
+                                                    mPornImages.add(image);
+                                                }
+                                            }
+                                        });
+                            } else {
+                                downloadNormalImage = true;
                             }
-                    );
-        }
+                        },
+                        throwable -> {
+                            logger.severe(throwable.getMessage());
+                        },
+                        () -> {
+                            logger.info("finish refreshDownloadImageThread");
+                        }
+                );
     }
 
     // ---------------------------------------------------------------- toString

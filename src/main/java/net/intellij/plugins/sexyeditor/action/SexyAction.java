@@ -16,7 +16,7 @@ public class SexyAction extends AnAction {
 
     private String url;
     private String infoUrl;
-    private SexyImageClient sexyImageClient;
+    private String title;
     private UrlValidator urlValidator = new UrlValidator();
 
     public SexyAction() {
@@ -26,14 +26,13 @@ public class SexyAction extends AnAction {
     public void actionPerformed(AnActionEvent event) {
         try {
             Desktop.getDesktop().browse(new URI(Strings.isNullOrEmpty(infoUrl) ? BorderConfig.PROJECT_PAGE : infoUrl));
-            if (sexyImageClient != null && !Strings.isNullOrEmpty(url) && urlValidator.isValid(url)) {
-                sexyImageClient.visit(url);
+            if (!Strings.isNullOrEmpty(url) && urlValidator.isValid(url)) {
+                SexyImageClient.getInstance().visit(url);
             }
         } catch (URISyntaxException | IOException ex) {
             //It looks like there's a problem
         }
     }
-
 
     public SexyAction setInfoUrl(String infoUrl) {
         this.infoUrl = infoUrl;
@@ -45,8 +44,9 @@ public class SexyAction extends AnAction {
         return this;
     }
 
-    public SexyAction setSexyImageClient(SexyImageClient sexyImageClient) {
-        this.sexyImageClient = sexyImageClient;
+
+    public SexyAction setTitle(String title) {
+        this.title = title;
         return this;
     }
 }
