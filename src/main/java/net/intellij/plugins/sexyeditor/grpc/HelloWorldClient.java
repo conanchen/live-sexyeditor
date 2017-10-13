@@ -2,8 +2,9 @@ package net.intellij.plugins.sexyeditor.grpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
-import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
+import io.grpc.examples.greeter.GreeterGrpc;
+import io.grpc.examples.greeter.HelloReply;
+import io.grpc.examples.greeter.HelloRequest;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -29,8 +30,8 @@ public class HelloWorldClient {
     public String greet(String name) {
         logger.info("Trying to greet " + name);
         try {
-            GreeterOuterClass.HelloRequest request = GreeterOuterClass.HelloRequest.newBuilder().setName(name).build();
-            GreeterOuterClass.HelloReply response = blockingStub.withWaitForReady().sayHello(request);
+            HelloRequest request = HelloRequest.newBuilder().setName(name).build();
+            HelloReply response = blockingStub.withWaitForReady().sayHello(request);
             logger.info("Response: " + response.getMessage());
             return response.getMessage();
         } catch (RuntimeException e) {

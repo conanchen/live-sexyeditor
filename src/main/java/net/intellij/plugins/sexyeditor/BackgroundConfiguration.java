@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 import net.intellij.plugins.sexyeditor.action.SexyAction;
 import net.intellij.plugins.sexyeditor.grpc.Image;
 import net.intellij.plugins.sexyeditor.grpc.SexyImageClient;
-import org.ditto.sexyimage.grpc.Common;
+import org.ditto.sexyimage.common.grpc.ImageType;
 
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -302,7 +302,6 @@ public class BackgroundConfiguration {
             if (image != null) {
                 String inforUrl1 = Strings.isNullOrEmpty(image.infoUrl) ? image.url : image.infoUrl;
                 action.setUrl(image.url).setInfoUrl(inforUrl1);
-                //TODO: use CachingHttpClients to cache remote images
                 return image.url;
             }
         }
@@ -417,13 +416,13 @@ public class BackgroundConfiguration {
                                             @Override
                                             public void onImageReceived(Image image) {
                                                 logger.info(String.format("onImageReceived image=[%s]", gson.toJson(image)));
-                                                if (Common.ImageType.NORMAL.equals(image.type)) {
+                                                if (ImageType.NORMAL.equals(image.type)) {
                                                     mNormalImages.add(image);
-                                                } else if (Common.ImageType.POSTER.equals(image.type)) {
+                                                } else if (ImageType.POSTER.equals(image.type)) {
                                                     mPosterImages.add(image);
-                                                } else if (Common.ImageType.SEXY.equals(image.type)) {
+                                                } else if (ImageType.SEXY.equals(image.type)) {
                                                     mSexyImages.add(image);
-                                                } else if (Common.ImageType.PORN.equals(image.type)) {
+                                                } else if (ImageType.PORN.equals(image.type)) {
                                                     mPornImages.add(image);
                                                 }
                                             }

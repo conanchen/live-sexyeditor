@@ -22,7 +22,6 @@ buildscript {
 //apply plugin: "java"
 apply plugin: "idea"
 apply plugin: 'org.jetbrains.intellij'
-apply plugin: "com.google.protobuf"
 
 //
 repositories {
@@ -35,72 +34,29 @@ repositories {
     maven {
         url 'https://www.jetbrains.com/intellij-repository/releases'
     }
-
+    maven { url 'https://jitpack.io' }
 }
 
 
 dependencies {
-    compile("io.grpc:grpc-netty:$GRPC_VERSION"){
+    compile("com.github.conanchen.hiask-api-sexyimage:grpc-public-java:master-SNAPSHOT"){
         force true
     }
-    compile("io.grpc:grpc-protobuf:$GRPC_VERSION") {
+
+    compile("io.grpc:grpc-netty:$GRPC_VERSION") {
         force true
     }
-    compile("io.grpc:grpc-stub:$GRPC_VERSION") {
-        force true
-    }
-    compile('com.google.protobuf:protobuf-java:3.3.1') {
-        force true
-    }
-    compile("io.grpc:grpc-core:$GRPC_VERSION") {
-        force true
-    }
+
     compile("io.grpc:grpc-services:$GRPC_VERSION") {
         force true
     }
 
 
     compile 'com.google.guava:guava:23.0'
-    compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
+    compile 'commons-validator:commons-validator:1.6'
     compile "io.reactivex.rxjava2:rxjava:2.1.3"
 }
 
-
-protobuf {
-    // Configure the protoc executable
-    protoc {
-        // Download from repositories
-        artifact = 'com.google.protobuf:protoc:3.0.0'
-
-    }
-    plugins {
-        // Define a plugin with name 'grpc'
-        grpc {
-            artifact = "io.grpc:protoc-gen-grpc-java:$GRPC_VERSION"
-        }
-    }
-
-    generateProtoTasks {
-        all()*.plugins {
-            grpc {}
-        }
-    }
-
-    generatedFilesBaseDir = "$projectDir/build/generated/source/proto"
-}
-
-clean {
-    delete protobuf.generatedFilesBaseDir
-}
-
-idea {
-    module {
-        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/java")
-        // If you have additional sourceSets and/or codegen plugins, add all of them
-        sourceDirs += file("${protobuf.generatedFilesBaseDir}/main/grpc")
-
-    }
-}
 
 intellij {
     version 'IC-2016.3' //IntelliJ IDEA 2016.3 dependency; for a full list of IntelliJ IDEA releases
@@ -117,10 +73,9 @@ project.afterEvaluate {
             compileClasspath -= files(new File(intellij.ideaDependency.classes, "lib/protobuf-2.5.0.jar").getAbsolutePath(),
                     new File(intellij.ideaDependency.classes, "lib/studio-profiler-grpc-1.0-jarjar.jar").getAbsolutePath())
 
-//            project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
+            // project.logger.lifecycle("compileClasspath=" + compileClasspath.getFiles())
             project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            project.logger.lifecycle("~~~1. Run Task BuildDependents To Compile Protobuf~~~~~~~~~~~");
-            project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~LIVE-SEXYEDITOR BUILD DONE~~~~~~~~~~~~~~");
             project.logger.lifecycle("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
     }

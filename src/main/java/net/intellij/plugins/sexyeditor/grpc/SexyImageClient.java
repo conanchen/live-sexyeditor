@@ -10,9 +10,12 @@ import io.grpc.netty.NettyChannelBuilder;
 import io.grpc.stub.ClientCallStreamObserver;
 import io.grpc.stub.ClientResponseObserver;
 import io.grpc.stub.StreamObserver;
-import net.intellij.plugins.sexyeditor.image.ImageGrpc;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
-import org.ditto.sexyimage.grpc.Common;
+import net.intellij.plugins.livesexyeditor.grpc.ImageGrpc;
+import net.intellij.plugins.livesexyeditor.grpc.SubscribeRequest;
+import net.intellij.plugins.livesexyeditor.grpc.VisitRequest;
+import net.intellij.plugins.livesexyeditor.grpc.VisitResponse;
+import org.ditto.sexyimage.common.grpc.ImageResponse;
+import org.ditto.sexyimage.common.grpc.ImageType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -50,7 +53,7 @@ public class SexyImageClient {
 
 
     private final AtomicBoolean isSubscribingImages = new AtomicBoolean(false);
-    private final Set<Common.ImageType> currentSubscribeImageTypes = new HashSet<>();
+    private final Set<ImageType> currentSubscribeImageTypes = new HashSet<>();
 
     public static SexyImageClient getInstance() {
         if (instance == null) {
@@ -80,10 +83,10 @@ public class SexyImageClient {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    private ClientCallStreamObserver<ImageOuterClass.SubscribeRequest> subscribeStream;
+    private ClientCallStreamObserver<SubscribeRequest> subscribeStream;
 
     private class SubscribeImagesStreamObserver implements ClientResponseObserver<
-            ImageOuterClass.SubscribeRequest, Common.ImageResponse> {
+            SubscribeRequest, ImageResponse> {
 
 
         SubcribeImageCallback subcribeImageCallback;
@@ -104,7 +107,7 @@ public class SexyImageClient {
         }
 
         @Override
-        public void onNext(Common.ImageResponse response) {
+        public void onNext(ImageResponse response) {
             Image image = Image
                     .builder()
                     .setUrl(response.getUrl())
@@ -132,7 +135,7 @@ public class SexyImageClient {
     }
 
 
-    public void startSubscribeIfNeed(Set<Common.ImageType> imageTypes, SubcribeImageCallback subcribeImageCallback) {
+    public void startSubscribeIfNeed(Set<ImageType> imageTypes, SubcribeImageCallback subcribeImageCallback) {
         assert imageTypes != null && imageTypes.size() > 0;
         if (needToStart(imageTypes)) {
             currentSubscribeImageTypes.clear();
@@ -143,7 +146,7 @@ public class SexyImageClient {
                         public void onNext(HealthCheckResponse value) {
 
                             imageStub.withWaitForReady()
-                                    .subscribe(ImageOuterClass.SubscribeRequest
+                                    .subscribe(SubscribeRequest
                                                     .newBuilder()
                                                     .addAllTypes(imageTypes)
                                                     .build()
@@ -166,7 +169,7 @@ public class SexyImageClient {
 
     }
 
-    private boolean needToStart(Set<Common.ImageType> imageTypes) {
+    private boolean needToStart(Set<ImageType> imageTypes) {
         boolean result = Sets.difference(currentSubscribeImageTypes, imageTypes).size() > 0 || !isSubscribingImages.get();
         logger.info(String.format("needToStart is %b", result));
         return result;
@@ -174,10 +177,10 @@ public class SexyImageClient {
 
 
     public void visit(String imageUrl) {
-        ImageOuterClass.VisitRequest visitRequest = ImageOuterClass.VisitRequest.newBuilder().setUrl(imageUrl).build();
-        imageStub.visit(visitRequest, new StreamObserver<ImageOuterClass.VisitResponse>() {
+        VisitRequest visitRequest = VisitRequest.newBuilder().setUrl(imageUrl).build();
+        imageStub.visit(visitRequest, new StreamObserver<VisitResponse>() {
             @Override
-            public void onNext(ImageOuterClass.VisitResponse value) {
+            public void onNext(VisitResponse value) {
                 logger.info(String.format("imageUrl=%s, VisitResponse=%s", imageUrl, gson.toJson(value)));
             }
 
@@ -232,13 +235,13 @@ public class SexyImageClient {
 
 
     @NotNull
-    public static Set<Common.ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
-        return new HashSet<Common.ImageType>() {
+    public static Set<ImageType> getImageTypes(boolean normal, boolean poster, boolean sexy, boolean porn) {
+        return new HashSet<ImageType>() {
             {
-                if (normal) add(Common.ImageType.NORMAL);
-                if (poster) add(Common.ImageType.POSTER);
-                if (sexy) add(Common.ImageType.SEXY);
-                if (porn) add(Common.ImageType.PORN);
+                if (normal) add(ImageType.NORMAL);
+                if (poster) add(ImageType.POSTER);
+                if (sexy) add(ImageType.SEXY);
+                if (porn) add(ImageType.PORN);
             }
         };
     }

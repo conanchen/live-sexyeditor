@@ -192,6 +192,7 @@ public class BackgroundBorder implements Border {
 		try {
             if (urlValidator.isValid(imageFileName)) {
                 //return ImageIO.read(new URL("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg"));
+				ImageIO.setUseCache(true);
                 return ImageIO.read(new URL(imageFileName));
             } else {
                 return ImageIO.read(new File(imageFileName));

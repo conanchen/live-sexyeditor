@@ -3,17 +3,21 @@ package net.intellij.plugins.sexyeditor.grpc;
 import com.google.gson.Gson;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.examples.greeter.GreeterGrpc;
+import io.grpc.examples.greeter.HelloReply;
+import io.grpc.examples.greeter.HelloRequest;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
 import io.grpc.stub.StreamObserver;
 import io.reactivex.Observable;
-import net.intellij.plugins.sexyeditor.greeter.GreeterGrpc;
-import net.intellij.plugins.sexyeditor.greeter.GreeterOuterClass;
-import net.intellij.plugins.sexyeditor.image.ImageGrpc;
-import net.intellij.plugins.sexyeditor.image.ImageOuterClass;
-import org.ditto.sexyimage.grpc.Common;
-
+import net.intellij.plugins.livesexyeditor.grpc.ImageGrpc;
+import net.intellij.plugins.livesexyeditor.grpc.SubscribeRequest;
+import net.intellij.plugins.livesexyeditor.grpc.VisitRequest;
+import net.intellij.plugins.livesexyeditor.grpc.VisitResponse;
+import org.ditto.sexyimage.common.grpc.ImageResponse;
+import org.ditto.sexyimage.common.grpc.ImageType;
+import org.ditto.sexyimage.common.grpc.Error;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,12 +83,12 @@ public class SexyTestServer {
     private class GreeterImpl extends GreeterGrpc.GreeterImplBase {
 
         @Override
-        public void sayHello(GreeterOuterClass.HelloRequest request, StreamObserver<GreeterOuterClass.HelloReply> responseObserver) {
+        public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
 
 
             String text = DateFormat.getInstance().format(new Date());
 
-            GreeterOuterClass.HelloReply response = GreeterOuterClass.HelloReply.newBuilder()
+            HelloReply response = HelloReply.newBuilder()
                     .setMessage("Hello " + request.getName() + " at " + text).build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
@@ -100,18 +104,18 @@ public class SexyTestServer {
                     add(Image.builder()
                             .setUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg?i=" + i)
                             .setInfoUrl("https://imgcache.cjmx.com/star/201512/20151201213056390.jpg")
-                            .setType(Common.ImageType.NORMAL)
+                            .setType(ImageType.NORMAL)
                             .build());
                 }
             }
         };
 
         @Override
-        public void subscribe(ImageOuterClass.SubscribeRequest request, StreamObserver<Common.ImageResponse> responseObserver) {
+        public void subscribe(SubscribeRequest request, StreamObserver<ImageResponse> responseObserver) {
             Observable.interval(3, TimeUnit.SECONDS).subscribe(aLong -> {
                 logger.info(String.format("aLong=%d push images", aLong));
                 for (Image im : images) {
-                    responseObserver.onNext(Common.ImageResponse.newBuilder()
+                    responseObserver.onNext(ImageResponse.newBuilder()
                             .setUrl(im.url)
                             .setInfoUrl(im.infoUrl)
                             .setType(im.type)
@@ -122,9 +126,9 @@ public class SexyTestServer {
         }
 
         @Override
-        public void visit(ImageOuterClass.VisitRequest request, StreamObserver<ImageOuterClass.VisitResponse> responseObserver) {
+        public void visit(VisitRequest request, StreamObserver<VisitResponse> responseObserver) {
             logger.info(String.format("VisitRequest.url=[%s]", request.getUrl()));
-            responseObserver.onNext(ImageOuterClass.VisitResponse.newBuilder().setError(Common.Error.newBuilder().setCode("IMAGE.VISIT.OK").build()).build());
+            responseObserver.onNext(VisitResponse.newBuilder().setError(Error.newBuilder().setCode("IMAGE.VISIT.OK").build()).build());
             responseObserver.onCompleted();
         }
     }

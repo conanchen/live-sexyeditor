@@ -1,7 +1,7 @@
 package net.intellij.plugins.sexyeditor.grpc;
 
 import com.google.common.base.Strings;
-import org.ditto.sexyimage.grpc.Common;
+import org.ditto.sexyimage.common.grpc.ImageType;
 
 import java.util.Objects;
 
@@ -11,13 +11,13 @@ public class Image {
     public String infoUrl;
     public String title;
     public String desc;
-    public Common.ImageType type;//NORMAL,POSTER,SEXY,PORN
+    public ImageType type;//NORMAL,POSTER,SEXY,PORN
 
 
     public Image() {
     }
 
-    public Image( String url, String infoUrl, String title, String desc, Common.ImageType type) {
+    public Image( String url, String infoUrl, String title, String desc, ImageType type) {
         this.url = url;
         this.infoUrl = infoUrl;
         this.title = title;
@@ -34,7 +34,7 @@ public class Image {
         private String infoUrl;
         private String title;
         private String desc;
-        private Common.ImageType type;//NORMAL,SEXY,PORN
+        private ImageType type;//NORMAL,SEXY,PORN
 
         Builder() {
         }
@@ -74,7 +74,7 @@ public class Image {
             return this;
         }
 
-        public Builder setType(Common.ImageType type) {
+        public Builder setType(ImageType type) {
             this.type = type;
             return this;
         }
